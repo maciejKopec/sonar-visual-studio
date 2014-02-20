@@ -44,7 +44,7 @@
   <url>http://www.example.org</url>
   <issueManagement>
     <system>JIRA</system>
-    <url>https://www.example.org</url>
+    <url>http://jira.codehaus.org/browse/SONARPLUGINS/component/16450</url>
   </issueManagement>
 
   <properties>
