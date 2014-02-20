@@ -70,7 +70,7 @@
         <configuration>
           <pluginKey>visualstudio</pluginKey>
           <pluginName>Visual Studio</pluginName>
-          <pluginDescription></pluginDescription>
+          <pluginDescription>Bootstraps projects from Visual Studio solution and project files.</pluginDescription>
           <pluginClass>org.sonar.plugins.visualstudio.VisualStudioPlugin</pluginClass>
         </configuration>
       </plugin>
