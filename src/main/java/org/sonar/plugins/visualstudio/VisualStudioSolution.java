@@ -19,17 +19,18 @@
  */
 package org.sonar.plugins.visualstudio;
 
-import com.google.common.collect.ImmutableList;
-import org.sonar.api.SonarPlugin;
-
 import java.util.List;
 
-public class VisualStudioPlugin extends SonarPlugin {
+public class VisualStudioSolution {
 
-  @Override
-  public List getExtensions() {
-    return ImmutableList.of(
-      VisualStudioProjectBuilder.class);
+  private final List<VisualStudioProject> projects;
+
+  public VisualStudioSolution(List<VisualStudioProject> projects) {
+    this.projects = projects;
+  }
+
+  public List<VisualStudioProject> projects() {
+    return projects;
   }
 
 }

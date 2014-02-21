@@ -19,17 +19,15 @@
  */
 package org.sonar.plugins.visualstudio;
 
-import com.google.common.collect.ImmutableList;
-import org.sonar.api.SonarPlugin;
+import org.junit.Test;
 
-import java.util.List;
+import static org.fest.assertions.Assertions.assertThat;
 
-public class VisualStudioPlugin extends SonarPlugin {
+public class VisualStudioPluginTest {
 
-  @Override
-  public List getExtensions() {
-    return ImmutableList.of(
-      VisualStudioProjectBuilder.class);
+  @Test
+  public void test() {
+    assertThat(new VisualStudioPlugin().getExtensions()).containsOnly(VisualStudioProjectBuilder.class);
   }
 
 }
