@@ -85,7 +85,6 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
       if (!file.isFile()) {
         LOG.warn("Cannot find the file " + file.getAbsolutePath() + " of project " + projectName);
       } else {
-        System.out.println("ADDING FILE: " + file.getAbsolutePath());
         module.addSourceFiles(file);
       }
     }
