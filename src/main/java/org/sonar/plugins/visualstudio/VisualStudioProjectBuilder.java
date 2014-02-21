@@ -59,22 +59,36 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
     solutionProject.resetSourceDirs();
 
     VisualStudioSolution solution = new VisualStudioSolutionParser(solutionFile).parse();
+
+    VisualStudioProjectParser projectParser = new VisualStudioProjectParser();
     for (VisualStudioSolutionProject project : solution.projects()) {
-      buildModule(solutionProject, solutionFile, project);
+      File projectFile = relativePathFile(solutionFile.getParentFile(), project.path());
+      if (!projectFile.isFile()) {
+        LOG.warn("Unable to find the Visual Studio project file " + projectFile.getAbsolutePath());
+      } else {
+        buildModule(solutionProject, project.name(), projectFile, projectParser.parse(projectFile));
+      }
     }
   }
 
-  private void buildModule(ProjectDefinition solutionProject, File solutionFile, VisualStudioSolutionProject project) {
-    File projectFile = new File(solutionFile.getParentFile(), project.path().replace('\\', '/'));
-    if (!projectFile.isFile()) {
-      LOG.warn("Unable to find the Visual Studio project file " + projectFile.getAbsolutePath());
-      return;
-    }
-
+  private void buildModule(ProjectDefinition solutionProject, String projectName, File projectFile, VisualStudioProject project) {
     ProjectDefinition module = ProjectDefinition.create()
-      .setKey(solutionProject.getKey() + ":" + project.name())
-      .setName(project.name());
+      .setKey(solutionProject.getKey() + ":" + projectName)
+      .setName(projectName);
     solutionProject.addSubProject(module);
+
+    module.setBaseDir(projectFile.getParentFile());
+    module.setSourceDirs(projectFile.getParentFile());
+
+    for (String filePath : project.files()) {
+      File file = relativePathFile(projectFile.getParentFile(), filePath);
+      if (!file.isFile()) {
+        LOG.warn("Cannot find the file " + file.getAbsolutePath() + " of project " + projectName);
+      } else {
+        System.out.println("ADDING FILE: " + file.getAbsolutePath());
+        module.addSourceFiles(file);
+      }
+    }
   }
 
   @Nullable
@@ -97,6 +111,10 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
     }
 
     return result;
+  }
+
+  private static File relativePathFile(File file, String relativePath) {
+    return new File(file, relativePath.replace('\\', '/'));
   }
 
 }

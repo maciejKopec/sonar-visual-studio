@@ -23,16 +23,10 @@ import java.util.List;
 
 public class VisualStudioProject {
 
-  private final String name;
   private final List<String> files;
 
-  public VisualStudioProject(String name, List<String> files) {
-    this.name = name;
+  public VisualStudioProject(List<String> files) {
     this.files = files;
-  }
-
-  public String name() {
-    return name;
   }
 
   public List<String> files() {

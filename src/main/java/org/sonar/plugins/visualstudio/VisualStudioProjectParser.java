@@ -35,8 +35,8 @@ import java.io.IOException;
 
 public class VisualStudioProjectParser {
 
-  public VisualStudioProject parse(String projectName, File file) {
-    return new Parser().parse(projectName, file);
+  public VisualStudioProject parse(File file) {
+    return new Parser().parse(file);
   }
 
   private static class Parser {
@@ -45,7 +45,7 @@ public class VisualStudioProjectParser {
     private XMLStreamReader stream;
     private final ImmutableList.Builder<String> filesBuilder = ImmutableList.builder();
 
-    public VisualStudioProject parse(String projectName, File file) {
+    public VisualStudioProject parse(File file) {
       this.file = file;
 
       FileReader reader = null;
@@ -73,7 +73,7 @@ public class VisualStudioProjectParser {
         Closeables.closeQuietly(reader);
       }
 
-      return new VisualStudioProject(projectName, filesBuilder.build());
+      return new VisualStudioProject(filesBuilder.build());
     }
 
     private void closeXmlStream() {
