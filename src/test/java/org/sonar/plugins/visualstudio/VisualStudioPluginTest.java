@@ -19,7 +19,11 @@
  */
 package org.sonar.plugins.visualstudio;
 
+import com.google.common.collect.ImmutableList;
 import org.junit.Test;
+import org.sonar.api.config.PropertyDefinition;
+
+import java.util.List;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -27,7 +31,31 @@ public class VisualStudioPluginTest {
 
   @Test
   public void test() {
-    assertThat(new VisualStudioPlugin().getExtensions()).containsOnly(VisualStudioProjectBuilder.class);
+    List extensions = new VisualStudioPlugin().getExtensions();
+
+    assertThat(nonProperties(extensions)).containsOnly(VisualStudioProjectBuilder.class);
+    assertThat(propertyKeys(extensions)).containsOnly("sonar.visualstudio.solution");
+  }
+
+  private List nonProperties(List extensions) {
+    ImmutableList.Builder builder = ImmutableList.builder();
+    for (Object extension : extensions) {
+      if (!(extension instanceof PropertyDefinition)) {
+        builder.add(extension);
+      }
+    }
+    return builder.build();
+  }
+
+  private List<String> propertyKeys(List extensions) {
+    ImmutableList.Builder<String> builder = ImmutableList.builder();
+    for (Object extension : extensions) {
+      if (extension instanceof PropertyDefinition) {
+        PropertyDefinition property = (PropertyDefinition) extension;
+        builder.add(property.key());
+      }
+    }
+    return builder.build();
   }
 
 }

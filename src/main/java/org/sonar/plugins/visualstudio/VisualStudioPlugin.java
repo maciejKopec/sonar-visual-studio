@@ -21,14 +21,27 @@ package org.sonar.plugins.visualstudio;
 
 import com.google.common.collect.ImmutableList;
 import org.sonar.api.SonarPlugin;
+import org.sonar.api.config.PropertyDefinition;
+import org.sonar.api.resources.Qualifiers;
 
 import java.util.List;
 
 public class VisualStudioPlugin extends SonarPlugin {
 
+  public static final String VISUAL_STUDIO_SOLUTION_PROPERTY_KEY = "sonar.visualstudio.solution";
+
   @Override
   public List getExtensions() {
     return ImmutableList.of(
+      PropertyDefinition
+        .builder(VISUAL_STUDIO_SOLUTION_PROPERTY_KEY)
+        .category(".NET")
+        .subCategory("Visual Studio")
+        .name("Solution file")
+        .description("Absolute or relative path from the project folder to the solution file to use. If set to empty, a \"*.sln\" file will be looked up in the project folder.")
+        .onQualifiers(Qualifiers.PROJECT)
+        .build(),
+
       VisualStudioProjectBuilder.class);
   }
 
