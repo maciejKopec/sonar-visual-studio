@@ -30,7 +30,7 @@ public class VisualStudioSolutionTest {
 
   @Test
   public void test() {
-    List<VisualStudioProject> projects = mock(List.class);
+    List<VisualStudioSolutionProject> projects = mock(List.class);
     assertThat(new VisualStudioSolution(projects).projects()).isSameAs(projects);
   }
 

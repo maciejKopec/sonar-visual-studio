@@ -38,7 +38,7 @@ public class VisualStudioSolutionParserTest {
 
     assertThat(solution.projects()).hasSize(5);
 
-    VisualStudioProject project = solution.projects().get(0);
+    VisualStudioSolutionProject project = solution.projects().get(0);
     assertThat(project.name()).isEqualTo("MyLibrary");
     assertThat(project.path()).isEqualTo("MyLibrary\\MyLibrary.csproj");
 

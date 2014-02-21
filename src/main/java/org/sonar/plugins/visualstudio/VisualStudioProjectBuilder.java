@@ -45,9 +45,9 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
 
   @Override
   public void build(Context context) {
-    ProjectDefinition project = context.projectReactor().getRoot();
+    ProjectDefinition solutionProject = context.projectReactor().getRoot();
 
-    File solutionFile = getSolutionFile(project.getBaseDir());
+    File solutionFile = getSolutionFile(solutionProject.getBaseDir());
     if (solutionFile == null) {
       LOG.info("No Visual Studio solution file found.");
       return;
@@ -56,12 +56,25 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
     LOG.info("Using the following Visual Studio solution: " + solutionFile.getAbsolutePath());
 
     // Workaround http://jira.codehaus.org/browse/SONARPLUGINS-3501
-    project.resetSourceDirs();
+    solutionProject.resetSourceDirs();
 
     VisualStudioSolution solution = new VisualStudioSolutionParser(solutionFile).parse();
-    for (VisualStudioProject vsProject : solution.projects()) {
-      System.out.println("GOT A PROJECT: " + vsProject.name());
+    for (VisualStudioSolutionProject project : solution.projects()) {
+      buildModule(solutionProject, solutionFile, project);
     }
+  }
+
+  private void buildModule(ProjectDefinition solutionProject, File solutionFile, VisualStudioSolutionProject project) {
+    File projectFile = new File(solutionFile.getParentFile(), project.path().replace('\\', '/'));
+    if (!projectFile.isFile()) {
+      LOG.warn("Unable to find the Visual Studio project file " + projectFile.getAbsolutePath());
+      return;
+    }
+
+    ProjectDefinition module = ProjectDefinition.create()
+      .setKey(solutionProject.getKey() + ":" + project.name())
+      .setName(project.name());
+    solutionProject.addSubProject(module);
   }
 
   @Nullable

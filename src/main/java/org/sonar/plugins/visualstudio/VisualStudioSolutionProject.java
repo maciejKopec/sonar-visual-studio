@@ -19,17 +19,22 @@
  */
 package org.sonar.plugins.visualstudio;
 
-import org.junit.Test;
+public class VisualStudioSolutionProject {
 
-import static org.fest.assertions.Assertions.assertThat;
+  private final String name;
+  private final String path;
 
-public class VisualStudioProjectTest {
+  public VisualStudioSolutionProject(String name, String path) {
+    this.name = name;
+    this.path = path;
+  }
 
-  @Test
-  public void test() {
-    VisualStudioProject project = new VisualStudioProject("foo", "bar");
-    assertThat(project.name()).isEqualTo("foo");
-    assertThat(project.path()).isEqualTo("bar");
+  public String name() {
+    return name;
+  }
+
+  public String path() {
+    return path;
   }
 
 }

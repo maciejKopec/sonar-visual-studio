@@ -41,7 +41,7 @@ public class VisualStudioSolutionParser {
   }
 
   public VisualStudioSolution parse() {
-    ImmutableList.Builder<VisualStudioProject> projectsBuilder = ImmutableList.builder();
+    ImmutableList.Builder<VisualStudioSolutionProject> projectsBuilder = ImmutableList.builder();
 
     try {
       int lineNumber = 1;
@@ -58,13 +58,13 @@ public class VisualStudioSolutionParser {
     return new VisualStudioSolution(projectsBuilder.build());
   }
 
-  private VisualStudioProject parseProjectLine(int lineNumber, String line) {
+  private VisualStudioSolutionProject parseProjectLine(int lineNumber, String line) {
     Matcher matcher = PROJECT_LINE_PATTERN.matcher(line);
     if (!matcher.matches()) {
       throw new ParseErrorException("Expected the line " + lineNumber + " of " + file.getAbsolutePath() + " to match the regular expression " + PROJECT_LINE_PATTERN);
     }
 
-    return new VisualStudioProject(matcher.group(1), matcher.group(2));
+    return new VisualStudioSolutionProject(matcher.group(1), matcher.group(2));
   }
 
   private static class ParseErrorException extends RuntimeException {

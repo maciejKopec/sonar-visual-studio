@@ -19,18 +19,17 @@
  */
 package org.sonar.plugins.visualstudio;
 
-import java.util.List;
+import org.junit.Test;
 
-public class VisualStudioSolution {
+import static org.fest.assertions.Assertions.assertThat;
 
-  private final List<VisualStudioSolutionProject> projects;
+public class VisualStudioSolutionProjectTest {
 
-  public VisualStudioSolution(List<VisualStudioSolutionProject> projects) {
-    this.projects = projects;
-  }
-
-  public List<VisualStudioSolutionProject> projects() {
-    return projects;
+  @Test
+  public void test() {
+    VisualStudioSolutionProject project = new VisualStudioSolutionProject("foo", "bar");
+    assertThat(project.name()).isEqualTo("foo");
+    assertThat(project.path()).isEqualTo("bar");
   }
 
 }

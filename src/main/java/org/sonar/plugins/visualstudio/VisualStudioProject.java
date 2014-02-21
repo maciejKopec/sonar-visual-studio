@@ -19,22 +19,24 @@
  */
 package org.sonar.plugins.visualstudio;
 
+import java.util.List;
+
 public class VisualStudioProject {
 
   private final String name;
-  private final String path;
+  private final List<String> files;
 
-  public VisualStudioProject(String name, String path) {
+  public VisualStudioProject(String name, List<String> files) {
     this.name = name;
-    this.path = path;
+    this.files = files;
   }
 
   public String name() {
     return name;
   }
 
-  public String path() {
-    return path;
+  public List<String> files() {
+    return files;
   }
 
 }
