@@ -34,7 +34,7 @@ public class VisualStudioSolutionParserTest {
 
   @Test
   public void valid() {
-    VisualStudioSolution solution = new VisualStudioSolutionParser(new File("src/test/resources/VisualStudioSolutionParserTest/valid.sln")).parse();
+    VisualStudioSolution solution = new VisualStudioSolutionParser().parse(new File("src/test/resources/VisualStudioSolutionParserTest/valid.sln"));
 
     assertThat(solution.projects()).hasSize(5);
 
@@ -50,8 +50,9 @@ public class VisualStudioSolutionParserTest {
   @Test
   public void invalid() {
     thrown.expectMessage("Expected the line 3 of ");
+    thrown.expectMessage(" to match the regular expression Project\\(\"[^\"]++\"\\)\\s*+=\\s*+\"([^\"]++)\",\\s*+\"([^\"]++)\",\\s*+\"[^\"]++\"");
 
-    new VisualStudioSolutionParser(new File("src/test/resources/VisualStudioSolutionParserTest/invalid.sln")).parse();
+    new VisualStudioSolutionParser().parse(new File("src/test/resources/VisualStudioSolutionParserTest/invalid.sln"));
   }
 
 }

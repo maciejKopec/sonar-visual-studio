@@ -34,20 +34,14 @@ public class VisualStudioSolutionParser {
   private static final String PROJECT_LINE_LOOKAHEAD = "Project(";
   private static final Pattern PROJECT_LINE_PATTERN = Pattern.compile("Project\\(\"[^\"]++\"\\)\\s*+=\\s*+\"([^\"]++)\",\\s*+\"([^\"]++)\",\\s*+\"[^\"]++\"");
 
-  private final File file;
-
-  public VisualStudioSolutionParser(File file) {
-    this.file = file;
-  }
-
-  public VisualStudioSolution parse() {
+  public VisualStudioSolution parse(File file) {
     ImmutableList.Builder<VisualStudioSolutionProject> projectsBuilder = ImmutableList.builder();
 
     try {
       int lineNumber = 1;
       for (String line : Files.readLines(file, Charsets.UTF_8)) {
         if (line.startsWith(PROJECT_LINE_LOOKAHEAD)) {
-          projectsBuilder.add(parseProjectLine(lineNumber, line));
+          projectsBuilder.add(parseProjectLine(file, lineNumber, line));
         }
         lineNumber++;
       }
@@ -58,7 +52,7 @@ public class VisualStudioSolutionParser {
     return new VisualStudioSolution(projectsBuilder.build());
   }
 
-  private VisualStudioSolutionProject parseProjectLine(int lineNumber, String line) {
+  private VisualStudioSolutionProject parseProjectLine(File file, int lineNumber, String line) {
     Matcher matcher = PROJECT_LINE_PATTERN.matcher(line);
     if (!matcher.matches()) {
       throw new ParseErrorException("Expected the line " + lineNumber + " of " + file.getAbsolutePath() + " to match the regular expression " + PROJECT_LINE_PATTERN);

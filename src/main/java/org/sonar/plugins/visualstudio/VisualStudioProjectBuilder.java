@@ -58,7 +58,7 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
     // Workaround http://jira.codehaus.org/browse/SONARPLUGINS-3501
     solutionProject.resetSourceDirs();
 
-    VisualStudioSolution solution = new VisualStudioSolutionParser(solutionFile).parse();
+    VisualStudioSolution solution = new VisualStudioSolutionParser().parse(solutionFile);
 
     VisualStudioProjectParser projectParser = new VisualStudioProjectParser();
     for (VisualStudioSolutionProject project : solution.projects()) {
