@@ -21,6 +21,9 @@ package org.sonar.plugins.visualstudio;
 
 import java.util.List;
 
+/**
+ * All information which can be extracted solely out of a .sln file.
+ */
 public class VisualStudioSolution {
 
   private final List<VisualStudioSolutionProject> projects;

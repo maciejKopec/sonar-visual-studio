@@ -19,6 +19,10 @@
  */
 package org.sonar.plugins.visualstudio;
 
+/**
+ * All information related to Visual Studio projects which can be extracted only from a .sln file.
+ * Should not be mixed with information gathered from project files.
+ */
 public class VisualStudioSolutionProject {
 
   private final String name;

@@ -21,6 +21,10 @@ package org.sonar.plugins.visualstudio;
 
 import java.util.List;
 
+/**
+ * All information related to Visual Studio projects which can be extracted only from a project file.
+ * Should not be mixed with information gathered from solution files.
+ */
 public class VisualStudioProject {
 
   private final List<String> files;
