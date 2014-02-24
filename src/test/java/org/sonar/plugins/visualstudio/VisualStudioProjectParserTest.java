@@ -49,4 +49,11 @@ public class VisualStudioProjectParserTest {
     new VisualStudioProjectParser().parse(new File("src/test/resources/VisualStudioProjectParserTest/invalid.csproj"));
   }
 
+  @Test
+  public void non_existing() {
+    thrown.expectMessage("java.io.FileNotFoundException");
+
+    new VisualStudioProjectParser().parse(new File("src/test/resources/VisualStudioProjectParserTest/non_existing.sln"));
+  }
+
 }
