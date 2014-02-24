@@ -99,7 +99,7 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
       result = new File(projectBaseDir, solutionPath);
     } else {
       Collection<File> solutionFiles = FileUtils.listFiles(projectBaseDir, new String[] {"sln"}, false);
-      if (solutionFiles.size() == 0) {
+      if (solutionFiles.isEmpty()) {
         result = null;
       } else if (solutionFiles.size() == 1) {
         result = solutionFiles.iterator().next();

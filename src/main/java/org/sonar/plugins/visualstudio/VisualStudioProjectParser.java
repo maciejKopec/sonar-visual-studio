@@ -87,11 +87,11 @@ public class VisualStudioProjectParser {
     }
 
     private void handleCompileTag() throws XMLStreamException {
-      String file = getRequiredAttribute("Include");
-      filesBuilder.add(file);
+      String include = getRequiredAttribute("Include");
+      filesBuilder.add(include);
     }
 
-    private String getRequiredAttribute(String name) throws ParseErrorException {
+    private String getRequiredAttribute(String name) {
       String value = getAttribute(name);
       if (value == null) {
         throw parseError("Missing attribute \"" + name + "\" in element <" + stream.getLocalName() + ">");
