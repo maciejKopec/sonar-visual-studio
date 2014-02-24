@@ -81,7 +81,7 @@ public class VisualStudioProjectParser {
         try {
           stream.close();
         } catch (XMLStreamException e) {
-          /* do nothing */
+          throw Throwables.propagate(e);
         }
       }
     }
