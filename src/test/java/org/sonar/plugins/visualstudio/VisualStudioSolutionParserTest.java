@@ -58,6 +58,7 @@ public class VisualStudioSolutionParserTest {
   @Test
   public void non_existing() {
     thrown.expectMessage("java.io.FileNotFoundException");
+    thrown.expectMessage("non_existing.sln");
 
     new VisualStudioSolutionParser().parse(new File("src/test/resources/VisualStudioSolutionParserTest/non_existing.sln"));
   }

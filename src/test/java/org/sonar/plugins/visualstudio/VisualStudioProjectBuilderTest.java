@@ -109,6 +109,7 @@ public class VisualStudioProjectBuilderTest {
   @Test
   public void should_pick_explicit_solution_over_detected_one() {
     thrown.expectMessage("java.io.FileNotFoundException");
+    thrown.expectMessage("non_existing.sln");
 
     Context context = mockContext("solution_key", new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/"));
 
