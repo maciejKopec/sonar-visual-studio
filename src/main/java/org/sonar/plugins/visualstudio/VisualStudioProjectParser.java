@@ -44,6 +44,9 @@ public class VisualStudioProjectParser {
     private File file;
     private XMLStreamReader stream;
     private final ImmutableList.Builder<String> filesBuilder = ImmutableList.builder();
+    private String outputType;
+    private String assemblyName;
+    private final ImmutableList.Builder<String> outputPathsBuilder = ImmutableList.builder();
 
     public VisualStudioProject parse(File file) {
       this.file = file;
@@ -61,6 +64,12 @@ public class VisualStudioProjectParser {
 
             if ("Compile".equals(tagName)) {
               handleCompileTag();
+            } else if ("OutputType".equals(tagName)) {
+              handleOutputTypeTag();
+            } else if ("AssemblyName".equals(tagName)) {
+              handleAssemblyNameTag();
+            } else if ("OutputPath".equals(tagName)) {
+              handleOutputPathTag();
             }
           }
         }
@@ -73,7 +82,7 @@ public class VisualStudioProjectParser {
         Closeables.closeQuietly(reader);
       }
 
-      return new VisualStudioProject(filesBuilder.build());
+      return new VisualStudioProject(filesBuilder.build(), outputType, assemblyName, outputPathsBuilder.build());
     }
 
     private void closeXmlStream() {
@@ -86,9 +95,21 @@ public class VisualStudioProjectParser {
       }
     }
 
-    private void handleCompileTag() throws XMLStreamException {
+    private void handleCompileTag() {
       String include = getRequiredAttribute("Include");
       filesBuilder.add(include);
+    }
+
+    private void handleOutputTypeTag() throws XMLStreamException {
+      outputType = stream.getElementText();
+    }
+
+    private void handleAssemblyNameTag() throws XMLStreamException {
+      assemblyName = stream.getElementText();
+    }
+
+    private void handleOutputPathTag() throws XMLStreamException {
+      outputPathsBuilder.add(stream.getElementText());
     }
 
     private String getRequiredAttribute(String name) {

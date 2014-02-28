@@ -31,7 +31,18 @@ public class VisualStudioProjectTest {
   @Test
   public void test() {
     List<String> files = mock(List.class);
-    assertThat(new VisualStudioProject(files).files()).isSameAs(files);
+    List<String> outputPaths = mock(List.class);
+
+    VisualStudioProject project = new VisualStudioProject(files, "Library", null, outputPaths);
+
+    assertThat(project.files()).isSameAs(files);
+    assertThat(project.outputType()).isEqualTo("Library");
+    assertThat(project.assemblyName()).isNull();
+    assertThat(project.outputPaths()).isSameAs(outputPaths);
+
+    project = new VisualStudioProject(files, null, "MyLibrary", outputPaths);
+    assertThat(project.outputType()).isNull();
+    assertThat(project.assemblyName()).isEqualTo("MyLibrary");
   }
 
 }

@@ -19,6 +19,8 @@
  */
 package org.sonar.plugins.visualstudio;
 
+import javax.annotation.Nullable;
+
 import java.util.List;
 
 /**
@@ -28,13 +30,33 @@ import java.util.List;
 public class VisualStudioProject {
 
   private final List<String> files;
+  private final String outputType;
+  private final String assemblyName;
+  private final List<String> outputPaths;
 
-  public VisualStudioProject(List<String> files) {
+  public VisualStudioProject(List<String> files, @Nullable String outputType, @Nullable String assemblyName, List<String> outputPaths) {
     this.files = files;
+    this.outputType = outputType;
+    this.assemblyName = assemblyName;
+    this.outputPaths = outputPaths;
   }
 
   public List<String> files() {
     return files;
+  }
+
+  @Nullable
+  public String outputType() {
+    return outputType;
+  }
+
+  @Nullable
+  public String assemblyName() {
+    return assemblyName;
+  }
+
+  public List<String> outputPaths() {
+    return outputPaths;
   }
 
 }

@@ -39,6 +39,11 @@ public class VisualStudioProjectParserTest {
     assertThat(project.files()).containsExactly(
       "Adder.cs",
       "Properties\\AssemblyInfo.cs");
+    assertThat(project.outputType()).isEqualTo("Library");
+    assertThat(project.assemblyName()).isEqualTo("MyLibrary");
+    assertThat(project.outputPaths()).containsExactly(
+      "bin\\Debug\\",
+      "bin\\Release\\");
   }
 
   @Test
