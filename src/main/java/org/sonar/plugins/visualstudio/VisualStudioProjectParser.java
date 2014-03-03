@@ -19,6 +19,7 @@
  */
 package org.sonar.plugins.visualstudio;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Closeables;
@@ -30,8 +31,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class VisualStudioProjectParser {
 
@@ -51,11 +53,11 @@ public class VisualStudioProjectParser {
     public VisualStudioProject parse(File file) {
       this.file = file;
 
-      FileReader reader = null;
+      InputStreamReader reader = null;
       XMLInputFactory xmlFactory = XMLInputFactory.newInstance();
 
       try {
-        reader = new FileReader(file);
+        reader = new InputStreamReader(new FileInputStream(file), Charsets.UTF_8);
         stream = xmlFactory.createXMLStreamReader(reader);
 
         while (stream.hasNext()) {
