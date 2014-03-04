@@ -19,12 +19,15 @@
  */
 package org.sonar.plugins.visualstudio;
 
+import com.google.common.collect.ImmutableList;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.rules.TemporaryFolder;
 import org.sonar.plugins.visualstudio.VisualStudioAssemblyLocator.FileLastModifiedComparator;
 
 import java.io.File;
+import java.util.Collections;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -35,9 +38,52 @@ public class VisualStudioAssemblyLocatorTest {
   @Rule
   public ExpectedException thrown = ExpectedException.none();
 
-  @Test
-  public void test() {
+  @Rule
+  public TemporaryFolder tmp = new TemporaryFolder();
 
+  @Test
+  public void test() throws Exception {
+    VisualStudioAssemblyLocator locator = new VisualStudioAssemblyLocator();
+
+    VisualStudioProject project = mock(VisualStudioProject.class);
+
+    when(project.outputType()).thenReturn(null);
+    assertThat(locator.locateAssembly(mock(File.class), project)).isNull();
+
+    when(project.outputType()).thenReturn("Library");
+    when(project.assemblyName()).thenReturn(null);
+    assertThat(locator.locateAssembly(mock(File.class), project)).isNull();
+
+    when(project.outputType()).thenReturn("Library");
+    when(project.assemblyName()).thenReturn("MyLibrary");
+    when(project.outputPaths()).thenReturn(Collections.EMPTY_LIST);
+    assertThat(locator.locateAssembly(mock(File.class), project)).isNull();
+
+    File projectFile = tmp.newFile("Solution.sln");
+    tmp.newFolder("outputPath1");
+    tmp.newFolder("outputPath2");
+    tmp.newFolder("outputPath3");
+
+    File assemblyFile1 = tmp.newFile("outputPath1/MyLibrary.dll");
+
+    when(project.outputType()).thenReturn("Library");
+    when(project.assemblyName()).thenReturn("MyLibrary");
+
+    when(project.outputPaths()).thenReturn(ImmutableList.of("outputPath1"));
+    assertThat(locator.locateAssembly(projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile1.getCanonicalPath());
+
+    when(project.outputPaths()).thenReturn(ImmutableList.of("outputPath2"));
+    assertThat(locator.locateAssembly(projectFile, project)).isNull();
+
+    Thread.sleep(1500L);
+
+    File assemblyFile3 = tmp.newFile("outputPath3/MyLibrary.dll");
+
+    when(project.outputPaths()).thenReturn(ImmutableList.of("outputPath1", "outputPath3"));
+    assertThat(locator.locateAssembly(projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile3.getCanonicalPath());
+
+    when(project.outputPaths()).thenReturn(ImmutableList.of("outputPath3", "outputPath1"));
+    assertThat(locator.locateAssembly(projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile3.getCanonicalPath());
   }
 
   @Test
