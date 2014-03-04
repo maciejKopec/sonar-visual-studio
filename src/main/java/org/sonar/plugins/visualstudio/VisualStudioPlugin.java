@@ -35,8 +35,7 @@ public class VisualStudioPlugin extends SonarPlugin {
     return ImmutableList.of(
       PropertyDefinition
         .builder(VISUAL_STUDIO_SOLUTION_PROPERTY_KEY)
-        .category(".NET")
-        .subCategory("Visual Studio")
+        .category("Visual Studio")
         .name("Solution file")
         .description("Absolute or relative path from the project folder to the solution file to use. If set to empty, a \"*.sln\" file will be looked up in the project folder.")
         .onQualifiers(Qualifiers.PROJECT)
