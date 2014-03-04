@@ -24,6 +24,8 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.sonar.api.batch.bootstrap.ProjectBuilder.Context;
 import org.sonar.api.batch.bootstrap.ProjectDefinition;
 import org.sonar.api.batch.bootstrap.ProjectReactor;
@@ -46,7 +48,21 @@ public class VisualStudioProjectBuilderTest {
     Context context = mockContext("solution_key", new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/"));
     ProjectDefinition solutionProject = context.projectReactor().getRoot();
 
-    new VisualStudioProjectBuilder(mock(Settings.class)).build(context);
+    final File assemblyFile = mock(File.class);
+    when(assemblyFile.getAbsolutePath()).thenReturn("c:/MyLibrary.dll");
+    VisualStudioAssemblyLocator assemblyLocator = mock(VisualStudioAssemblyLocator.class);
+    when(assemblyLocator.locateAssembly(Mockito.any(File.class), Mockito.any(VisualStudioProject.class))).thenAnswer(new Answer<File>() {
+
+      @Override
+      public File answer(InvocationOnMock invocation) throws Throwable {
+        File projectFile = (File) invocation.getArguments()[0];
+
+        return "MyLibrary.csproj".equals(projectFile.getName()) ? assemblyFile : null;
+      }
+
+    });
+
+    new VisualStudioProjectBuilder(mock(Settings.class)).build(context, assemblyLocator);
 
     verify(solutionProject).resetSourceDirs();
 
@@ -68,6 +84,9 @@ public class VisualStudioProjectBuilderTest {
     assertThat(new File(libraryProject.getSourceFiles().get(0)).getAbsoluteFile())
       .isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibrary/Adder.cs").getAbsoluteFile());
 
+    assertThat(libraryProject.getProperties().get("sonar.csharp.fxcop.assemblies")).isEqualTo("c:/MyLibrary.dll");
+    assertThat(libraryProject.getProperties().get("sonar.vbnet.fxcop.assemblies")).isEqualTo("c:/MyLibrary.dll");
+
     ProjectDefinition libraryTestProject = subModules.getAllValues().get(1);
     assertThat(libraryTestProject.getKey()).isEqualTo("solution_key:MyLibraryTest");
     assertThat(libraryTestProject.getName()).isEqualTo("MyLibraryTest");
@@ -83,6 +102,9 @@ public class VisualStudioProjectBuilderTest {
     assertThat(libraryTestProject.getSourceFiles()).hasSize(1);
     assertThat(new File(libraryTestProject.getSourceFiles().get(0)).getAbsoluteFile())
       .isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibraryTest/AdderTest.cs").getAbsoluteFile());
+
+    assertThat(libraryTestProject.getProperties().get("sonar.csharp.fxcop.assemblies")).isNull();
+    assertThat(libraryTestProject.getProperties().get("sonar.vbnet.fxcop.assemblies")).isNull();
   }
 
   @Test
