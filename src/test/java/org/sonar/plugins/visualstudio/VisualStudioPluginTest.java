@@ -33,9 +33,7 @@ public class VisualStudioPluginTest {
   public void test() {
     List extensions = new VisualStudioPlugin().getExtensions();
 
-    assertThat(nonProperties(extensions)).containsOnly(
-      VisualStudioAssemblyLocator.class,
-      VisualStudioProjectBuilder.class);
+    assertThat(nonProperties(extensions)).containsOnly(VisualStudioProjectBuilder.class);
     assertThat(propertyKeys(extensions)).containsOnly("sonar.visualstudio.solution");
   }
 

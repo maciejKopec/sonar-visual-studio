@@ -46,7 +46,7 @@ public class VisualStudioProjectBuilderTest {
     Context context = mockContext("solution_key", new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/"));
     ProjectDefinition solutionProject = context.projectReactor().getRoot();
 
-    new VisualStudioProjectBuilder(mock(Settings.class), mock(VisualStudioAssemblyLocator.class)).build(context);
+    new VisualStudioProjectBuilder(mock(Settings.class)).build(context);
 
     verify(solutionProject).resetSourceDirs();
 
@@ -90,7 +90,7 @@ public class VisualStudioProjectBuilderTest {
     thrown.expectMessage("Found several .sln files in ");
 
     Context context = mockContext("solution_key", new File("src/test/resources/VisualStudioProjectBuilderTest/several_sln/"));
-    new VisualStudioProjectBuilder(mock(Settings.class), mock(VisualStudioAssemblyLocator.class)).build(context);
+    new VisualStudioProjectBuilder(mock(Settings.class)).build(context);
   }
 
   @Test
@@ -101,7 +101,7 @@ public class VisualStudioProjectBuilderTest {
     Settings settings = mock(Settings.class);
     when(settings.getString(VisualStudioPlugin.VISUAL_STUDIO_SOLUTION_PROPERTY_KEY)).thenReturn("empty_solution.sln");
 
-    new VisualStudioProjectBuilder(settings, mock(VisualStudioAssemblyLocator.class)).build(context);
+    new VisualStudioProjectBuilder(settings).build(context);
 
     verify(solutionProject, Mockito.never()).addSubProject(Mockito.any(ProjectDefinition.class));
   }
@@ -116,7 +116,7 @@ public class VisualStudioProjectBuilderTest {
     Settings settings = mock(Settings.class);
     when(settings.getString(VisualStudioPlugin.VISUAL_STUDIO_SOLUTION_PROPERTY_KEY)).thenReturn("non_existing.sln");
 
-    new VisualStudioProjectBuilder(settings, mock(VisualStudioAssemblyLocator.class)).build(context);
+    new VisualStudioProjectBuilder(settings).build(context);
   }
 
   @Test
@@ -124,7 +124,7 @@ public class VisualStudioProjectBuilderTest {
     Context context = mockContext("solution_key", new File("src/test/resources/VisualStudioProjectBuilderTest/no_sln/"));
     ProjectDefinition solutionProject = context.projectReactor().getRoot();
 
-    new VisualStudioProjectBuilder(mock(Settings.class), mock(VisualStudioAssemblyLocator.class)).build(context);
+    new VisualStudioProjectBuilder(mock(Settings.class)).build(context);
 
     verify(solutionProject, Mockito.never()).addSubProject(Mockito.any(ProjectDefinition.class));
   }
