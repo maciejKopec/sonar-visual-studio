@@ -23,6 +23,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -66,7 +67,9 @@ public class VisualStudioAssemblyLocator {
   }
 
   @VisibleForTesting
-  static class FileLastModifiedComparator implements Comparator<File> {
+  static class FileLastModifiedComparator implements Comparator<File>, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Override
     public int compare(File o1, File o2) {
