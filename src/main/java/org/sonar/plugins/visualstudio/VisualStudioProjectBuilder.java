@@ -38,9 +38,11 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
   private static final Logger LOG = LoggerFactory.getLogger(VisualStudioProjectBuilder.class);
 
   private final Settings settings;
+  private final VisualStudioAssemblyLocator assemblyLocator;
 
-  public VisualStudioProjectBuilder(Settings settings) {
+  public VisualStudioProjectBuilder(Settings settings, VisualStudioAssemblyLocator assemblyLocator) {
     this.settings = settings;
+    this.assemblyLocator = assemblyLocator;
   }
 
   @Override
@@ -88,6 +90,21 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
         module.addSourceFiles(file);
       }
     }
+
+    setFxCopProperties(module, projectFile, project);
+  }
+
+  private void setFxCopProperties(ProjectDefinition module, File projectFile, VisualStudioProject project) {
+    File assembly = assemblyLocator.locateAssembly(projectFile, project);
+    if (assembly == null) {
+      LOG.warn("Unable to locate the assembly of project " + projectFile.getAbsolutePath());
+      return;
+    }
+
+    LOG.info("Setting the Code Analysis / FxCop assembly property to " + assembly.getAbsolutePath() + " for project " + projectFile.getAbsolutePath());
+
+    module.setProperty("sonar.csharp.fxcop.assemblies", assembly.getAbsolutePath());
+    module.setProperty("sonar.vbnet.fxcop.assemblies", assembly.getAbsolutePath());
   }
 
   @Nullable
