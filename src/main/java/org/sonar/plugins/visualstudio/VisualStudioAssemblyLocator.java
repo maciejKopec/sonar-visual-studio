@@ -21,7 +21,6 @@ package org.sonar.plugins.visualstudio;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
-import org.sonar.api.BatchComponent;
 
 import java.io.File;
 import java.io.Serializable;
@@ -29,7 +28,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class VisualStudioAssemblyLocator implements BatchComponent {
+public class VisualStudioAssemblyLocator {
 
   private static final Comparator<File> FILE_LAST_MODIFIED_COMPARATOR = new FileLastModifiedComparator();
 

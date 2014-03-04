@@ -41,7 +41,6 @@ public class VisualStudioPlugin extends SonarPlugin {
         .onQualifiers(Qualifiers.PROJECT)
         .build(),
 
-      VisualStudioAssemblyLocator.class,
       VisualStudioProjectBuilder.class);
   }
 

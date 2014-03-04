@@ -38,15 +38,17 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
   private static final Logger LOG = LoggerFactory.getLogger(VisualStudioProjectBuilder.class);
 
   private final Settings settings;
-  private final VisualStudioAssemblyLocator assemblyLocator;
 
-  public VisualStudioProjectBuilder(Settings settings, VisualStudioAssemblyLocator assemblyLocator) {
+  public VisualStudioProjectBuilder(Settings settings) {
     this.settings = settings;
-    this.assemblyLocator = assemblyLocator;
   }
 
   @Override
   public void build(Context context) {
+    build(context, new VisualStudioAssemblyLocator());
+  }
+
+  public void build(Context context, VisualStudioAssemblyLocator assemblyLocator) {
     ProjectDefinition solutionProject = context.projectReactor().getRoot();
 
     File solutionFile = getSolutionFile(solutionProject.getBaseDir());
@@ -68,12 +70,12 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
       if (!projectFile.isFile()) {
         LOG.warn("Unable to find the Visual Studio project file " + projectFile.getAbsolutePath());
       } else {
-        buildModule(solutionProject, project.name(), projectFile, projectParser.parse(projectFile));
+        buildModule(solutionProject, project.name(), projectFile, projectParser.parse(projectFile), assemblyLocator);
       }
     }
   }
 
-  private void buildModule(ProjectDefinition solutionProject, String projectName, File projectFile, VisualStudioProject project) {
+  private void buildModule(ProjectDefinition solutionProject, String projectName, File projectFile, VisualStudioProject project, VisualStudioAssemblyLocator assemblyLocator) {
     ProjectDefinition module = ProjectDefinition.create()
       .setKey(solutionProject.getKey() + ":" + projectName)
       .setName(projectName);
@@ -91,10 +93,10 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
       }
     }
 
-    setFxCopProperties(module, projectFile, project);
+    setFxCopProperties(module, projectFile, project, assemblyLocator);
   }
 
-  private void setFxCopProperties(ProjectDefinition module, File projectFile, VisualStudioProject project) {
+  private void setFxCopProperties(ProjectDefinition module, File projectFile, VisualStudioProject project, VisualStudioAssemblyLocator assemblyLocator) {
     File assembly = assemblyLocator.locateAssembly(projectFile, project);
     if (assembly == null) {
       LOG.warn("Unable to locate the assembly of project " + projectFile.getAbsolutePath());
