@@ -65,6 +65,8 @@ public class VisualStudioAssemblyLocator {
       result = "dll";
     } else if ("Exe".equals(outputType)) {
       result = "exe";
+    } else if ("WinExe".equals(outputType)) {
+      result = "exe";
     } else {
       throw new IllegalArgumentException("Unsupported output type \"" + outputType + "\" for project " + projectFile.getAbsolutePath());
     }

@@ -90,6 +90,7 @@ public class VisualStudioAssemblyLocatorTest {
   public void supported_extensions() {
     assertThat(new VisualStudioAssemblyLocator().extension(mock(File.class), "Library")).isEqualTo("dll");
     assertThat(new VisualStudioAssemblyLocator().extension(mock(File.class), "Exe")).isEqualTo("exe");
+    assertThat(new VisualStudioAssemblyLocator().extension(mock(File.class), "WinExe")).isEqualTo("exe");
   }
 
   @Test
