@@ -59,11 +59,17 @@ public class VisualStudioAssemblyLocator {
 
   @VisibleForTesting
   String extension(File projectFile, String outputType) {
+    String result;
+
     if ("Library".equals(outputType)) {
-      return "dll";
+      result = "dll";
+    } else if ("Exe".equals(outputType)) {
+      result = "exe";
+    } else {
+      throw new IllegalArgumentException("Unsupported output type \"" + outputType + "\" for project " + projectFile.getAbsolutePath());
     }
 
-    throw new IllegalArgumentException("Unsupported output type \"" + outputType + "\" for project " + projectFile.getAbsolutePath());
+    return result;
   }
 
   public static class FileLastModifiedComparator implements Comparator<File>, Serializable {
