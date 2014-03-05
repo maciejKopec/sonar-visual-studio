@@ -70,12 +70,13 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
       if (!projectFile.isFile()) {
         LOG.warn("Unable to find the Visual Studio project file " + projectFile.getAbsolutePath());
       } else {
-        buildModule(solutionProject, project.name(), projectFile, projectParser.parse(projectFile), assemblyLocator);
+        buildModule(solutionProject, project.name(), projectFile, projectParser.parse(projectFile), assemblyLocator, solutionFile);
       }
     }
   }
 
-  private void buildModule(ProjectDefinition solutionProject, String projectName, File projectFile, VisualStudioProject project, VisualStudioAssemblyLocator assemblyLocator) {
+  private void buildModule(ProjectDefinition solutionProject, String projectName, File projectFile, VisualStudioProject project, VisualStudioAssemblyLocator assemblyLocator,
+    File solutionFile) {
     ProjectDefinition module = ProjectDefinition.create()
       .setKey(solutionProject.getKey() + ":" + projectName)
       .setName(projectName);
@@ -94,6 +95,7 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
     }
 
     setFxCopProperties(module, projectFile, project, assemblyLocator);
+    setReSharperProperties(module, projectName, solutionFile);
   }
 
   private void setFxCopProperties(ProjectDefinition module, File projectFile, VisualStudioProject project, VisualStudioAssemblyLocator assemblyLocator) {
@@ -107,6 +109,14 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
 
     module.setProperty("sonar.csharp.fxcop.assemblies", assembly.getAbsolutePath());
     module.setProperty("sonar.vbnet.fxcop.assemblies", assembly.getAbsolutePath());
+  }
+
+  private void setReSharperProperties(ProjectDefinition module, String projectName, File solutionFile) {
+    module.setProperty("sonar.csharp.resharper.solution.file", solutionFile.getAbsolutePath());
+    module.setProperty("sonar.csharp.resharper.project.name", projectName);
+
+    module.setProperty("sonar.vbnet.resharper.solution.file", solutionFile.getAbsolutePath());
+    module.setProperty("sonar.vbnet.resharper.project.name", projectName);
   }
 
   @Nullable
