@@ -61,7 +61,7 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
     LOG.info("Using the following Visual Studio solution: " + solutionFile.getAbsolutePath());
 
     if (settings.hasKey(SONAR_MODULES_PROPERTY_KEY)) {
-      throw new SonarException("Do not use the Visual Studio and set the \"" + SONAR_MODULES_PROPERTY_KEY + "\" property at the same time.");
+      throw new SonarException("Do not use the Visual Studio bootstrapper and set the \"" + SONAR_MODULES_PROPERTY_KEY + "\" property at the same time.");
     }
 
     // Workaround http://jira.codehaus.org/browse/SONARPLUGINS-3501

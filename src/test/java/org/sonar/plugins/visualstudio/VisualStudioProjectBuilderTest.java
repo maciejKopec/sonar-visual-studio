@@ -160,7 +160,7 @@ public class VisualStudioProjectBuilderTest {
 
   @Test
   public void should_fail_when_sonar_modules_property_is_set() {
-    thrown.expectMessage("Do not use the Visual Studio and set the \"sonar.modules\" property at the same time.");
+    thrown.expectMessage("Do not use the Visual Studio bootstrapper and set the \"sonar.modules\" property at the same time.");
 
     Context context = mockContext("solution_key", new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/"));
 
