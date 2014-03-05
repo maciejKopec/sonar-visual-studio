@@ -158,6 +158,18 @@ public class VisualStudioProjectBuilderTest {
     verify(solutionProject, Mockito.never()).addSubProject(Mockito.any(ProjectDefinition.class));
   }
 
+  @Test
+  public void should_fail_when_sonar_modules_property_is_set() {
+    thrown.expectMessage("Do not use the Visual Studio and set the \"sonar.modules\" property at the same time.");
+
+    Context context = mockContext("solution_key", new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/"));
+
+    Settings settings = mock(Settings.class);
+    when(settings.hasKey("sonar.modules")).thenReturn(true);
+
+    new VisualStudioProjectBuilder(settings).build(context);
+  }
+
   private static Context mockContext(String key, File baseDir) {
     ProjectDefinition project = mock(ProjectDefinition.class);
     when(project.getKey()).thenReturn(key);
