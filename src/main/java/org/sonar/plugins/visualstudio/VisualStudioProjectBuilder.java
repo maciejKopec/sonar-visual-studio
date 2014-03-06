@@ -112,13 +112,13 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
 
     LOG.info("Setting the Code Analysis / FxCop assembly property to " + assembly.getAbsolutePath() + " for project " + projectFile.getAbsolutePath());
 
-    module.setProperty("sonar.csharp.fxcop.assemblies", assembly.getAbsolutePath());
+    module.setProperty("sonar.cs.fxcop.assemblies", assembly.getAbsolutePath());
     module.setProperty("sonar.vbnet.fxcop.assemblies", assembly.getAbsolutePath());
   }
 
   private void setReSharperProperties(ProjectDefinition module, String projectName, File solutionFile) {
-    module.setProperty("sonar.csharp.resharper.solution.file", solutionFile.getAbsolutePath());
-    module.setProperty("sonar.csharp.resharper.project.name", projectName);
+    module.setProperty("sonar.cs.resharper.solution.file", solutionFile.getAbsolutePath());
+    module.setProperty("sonar.cs.resharper.project.name", projectName);
 
     module.setProperty("sonar.vbnet.resharper.solution.file", solutionFile.getAbsolutePath());
     module.setProperty("sonar.vbnet.resharper.project.name", projectName);

@@ -84,15 +84,15 @@ public class VisualStudioProjectBuilderTest {
     assertThat(new File(libraryProject.getSourceFiles().get(0)).getAbsoluteFile())
       .isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibrary/Adder.cs").getAbsoluteFile());
 
-    assertThat(libraryProject.getProperties().get("sonar.csharp.fxcop.assemblies")).isEqualTo("c:/MyLibrary.dll");
+    assertThat(libraryProject.getProperties().get("sonar.cs.fxcop.assemblies")).isEqualTo("c:/MyLibrary.dll");
     assertThat(libraryProject.getProperties().get("sonar.vbnet.fxcop.assemblies")).isEqualTo("c:/MyLibrary.dll");
 
-    assertThat(libraryProject.getProperties().get("sonar.csharp.resharper.solution.file"))
+    assertThat(libraryProject.getProperties().get("sonar.cs.resharper.solution.file"))
       .isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/solution.sln").getAbsolutePath());
-    assertThat(libraryProject.getProperties().get("sonar.csharp.resharper.project.name")).isEqualTo("MyLibrary");
+    assertThat(libraryProject.getProperties().get("sonar.cs.resharper.project.name")).isEqualTo("MyLibrary");
 
-    assertThat(libraryProject.getProperties().get("sonar.vbnet.resharper.solution.file")).isEqualTo(libraryProject.getProperties().get("sonar.csharp.resharper.solution.file"));
-    assertThat(libraryProject.getProperties().get("sonar.vbnet.resharper.project.name")).isEqualTo(libraryProject.getProperties().get("sonar.csharp.resharper.project.name"));
+    assertThat(libraryProject.getProperties().get("sonar.vbnet.resharper.solution.file")).isEqualTo(libraryProject.getProperties().get("sonar.cs.resharper.solution.file"));
+    assertThat(libraryProject.getProperties().get("sonar.vbnet.resharper.project.name")).isEqualTo(libraryProject.getProperties().get("sonar.cs.resharper.project.name"));
 
     ProjectDefinition libraryTestProject = subModules.getAllValues().get(1);
     assertThat(libraryTestProject.getKey()).isEqualTo("solution_key:MyLibraryTest");
@@ -110,7 +110,7 @@ public class VisualStudioProjectBuilderTest {
     assertThat(new File(libraryTestProject.getSourceFiles().get(0)).getAbsoluteFile())
       .isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibraryTest/AdderTest.cs").getAbsoluteFile());
 
-    assertThat(libraryTestProject.getProperties().get("sonar.csharp.fxcop.assemblies")).isNull();
+    assertThat(libraryTestProject.getProperties().get("sonar.cs.fxcop.assemblies")).isNull();
     assertThat(libraryTestProject.getProperties().get("sonar.vbnet.fxcop.assemblies")).isNull();
   }
 
