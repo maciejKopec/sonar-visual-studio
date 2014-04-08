@@ -118,11 +118,8 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
   }
 
   private void setReSharperProperties(ProjectDefinition module, String projectName, File solutionFile) {
-    module.setProperty("sonar.cs.resharper.solution.file", solutionFile.getAbsolutePath());
-    module.setProperty("sonar.cs.resharper.project.name", projectName);
-
-    module.setProperty("sonar.vbnet.resharper.solution.file", solutionFile.getAbsolutePath());
-    module.setProperty("sonar.vbnet.resharper.project.name", projectName);
+    module.setProperty("sonar.resharper.solutionFile", solutionFile.getAbsolutePath());
+    module.setProperty("sonar.resharper.projectName", projectName);
   }
 
   @Nullable
