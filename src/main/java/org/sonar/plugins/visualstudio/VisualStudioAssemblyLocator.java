@@ -1,5 +1,5 @@
 /*
- * SonarQube Visual Studio Plugin
+ * Analysis Bootstrapper for Visual Studio Projects
  * Copyright (C) 2014 SonarSource
  * dev@sonar.codehaus.org
  *

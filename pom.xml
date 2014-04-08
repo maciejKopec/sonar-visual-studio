@@ -14,8 +14,8 @@
   <version>1.0-SNAPSHOT</version>
   <packaging>sonar-plugin</packaging>
 
-  <name>SonarQube Visual Studio Plugin</name>
-  <description>.</description>
+  <name>Analysis Bootstrapper for Visual Studio Projects</name>
+  <description>Bootstraps the analysis from Visual Studio solution and project files.</description>
   <inceptionYear>2014</inceptionYear>
   <organization>
     <name>SonarSource</name>
@@ -45,7 +45,7 @@
   <url>http://docs.codehaus.org/x/TAA1Dg</url>
   <issueManagement>
     <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/SONARPLUGINS/component/16450</url>
+    <url>http://jira.codehaus.org/browse/SONARVS</url>
   </issueManagement>
 
   <properties>
@@ -89,8 +89,8 @@
         <artifactId>sonar-packaging-maven-plugin</artifactId>
         <configuration>
           <pluginKey>visualstudio</pluginKey>
-          <pluginName>Visual Studio</pluginName>
-          <pluginDescription>Bootstraps projects from Visual Studio solution and project files.</pluginDescription>
+          <pluginName>Analysis Bootstrapper for Visual Studio Projects</pluginName>
+          <pluginDescription>Bootstraps the analysis from Visual Studio solution and project files.</pluginDescription>
           <pluginClass>org.sonar.plugins.visualstudio.VisualStudioPlugin</pluginClass>
         </configuration>
       </plugin>
