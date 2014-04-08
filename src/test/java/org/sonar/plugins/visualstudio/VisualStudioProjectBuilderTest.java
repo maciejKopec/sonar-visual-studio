@@ -48,6 +48,9 @@ public class VisualStudioProjectBuilderTest {
     Context context = mockContext("solution_key", new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/"));
     ProjectDefinition solutionProject = context.projectReactor().getRoot();
 
+    File workingDir = new File("target/VisualStudioProjectBuilderTest/.sonar");
+    when(solutionProject.getWorkDir()).thenReturn(workingDir);
+
     final File assemblyFile = mock(File.class);
     when(assemblyFile.getAbsolutePath()).thenReturn("c:/MyLibrary.dll");
     VisualStudioAssemblyLocator assemblyLocator = mock(VisualStudioAssemblyLocator.class);
@@ -79,6 +82,8 @@ public class VisualStudioProjectBuilderTest {
     assertThat(libraryProject.getSourceDirs()).hasSize(1);
     assertThat(new File(libraryProject.getSourceDirs().get(0)).getAbsoluteFile())
       .isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibrary/").getAbsoluteFile());
+    assertThat(libraryProject.getBaseDir().getAbsoluteFile()).isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibrary/").getAbsoluteFile());
+    assertThat(libraryProject.getWorkDir()).isEqualTo(new File(workingDir, "solution_key_MyLibrary"));
 
     assertThat(libraryProject.getSourceFiles()).hasSize(1);
     assertThat(new File(libraryProject.getSourceFiles().get(0)).getAbsoluteFile())
@@ -105,6 +110,7 @@ public class VisualStudioProjectBuilderTest {
     assertThat(libraryTestProject.getSourceDirs()).hasSize(1);
     assertThat(new File(libraryTestProject.getSourceDirs().get(0)).getAbsoluteFile())
       .isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibraryTest/").getAbsoluteFile());
+    assertThat(libraryTestProject.getWorkDir()).isEqualTo(new File(workingDir, "solution_key_MyLibraryTest"));
 
     assertThat(libraryTestProject.getSourceFiles()).hasSize(1);
     assertThat(new File(libraryTestProject.getSourceFiles().get(0)).getAbsoluteFile())
