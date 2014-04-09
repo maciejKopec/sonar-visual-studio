@@ -101,6 +101,7 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
 
     setFxCopProperties(module, projectFile, project, assemblyLocator);
     setReSharperProperties(module, projectName, solutionFile);
+    setStyleCopProperties(module, projectFile);
   }
 
   private void setFxCopProperties(ProjectDefinition module, File projectFile, VisualStudioProject project, VisualStudioAssemblyLocator assemblyLocator) {
@@ -117,6 +118,10 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
   private void setReSharperProperties(ProjectDefinition module, String projectName, File solutionFile) {
     module.setProperty("sonar.resharper.solutionFile", solutionFile.getAbsolutePath());
     module.setProperty("sonar.resharper.projectName", projectName);
+  }
+
+  private void setStyleCopProperties(ProjectDefinition module, File projectFile) {
+    module.setProperty("sonar.stylecop.projectFilePath", projectFile.getAbsolutePath());
   }
 
   @Nullable

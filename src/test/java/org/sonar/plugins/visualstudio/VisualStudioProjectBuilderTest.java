@@ -96,6 +96,9 @@ public class VisualStudioProjectBuilderTest {
       .isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/solution.sln").getAbsolutePath());
     assertThat(libraryProject.getProperties().get("sonar.resharper.projectName")).isEqualTo("MyLibrary");
 
+    assertThat(libraryProject.getProperties().get("sonar.stylecop.projectFilePath"))
+      .isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibrary/MyLibrary.csproj").getAbsolutePath());
+
     ProjectDefinition libraryTestProject = subModules.getAllValues().get(1);
     assertThat(libraryTestProject.getKey()).isEqualTo("solution:key:MyLibraryTest");
     assertThat(libraryTestProject.getName()).isEqualTo("MyLibraryTest");
@@ -115,6 +118,13 @@ public class VisualStudioProjectBuilderTest {
 
     assertThat(libraryTestProject.getProperties().get("sonar.cs.fxcop.assemblies")).isNull();
     assertThat(libraryTestProject.getProperties().get("sonar.vbnet.fxcop.assemblies")).isNull();
+
+    assertThat(libraryTestProject.getProperties().get("sonar.resharper.solutionFile"))
+      .isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/solution.sln").getAbsolutePath());
+    assertThat(libraryTestProject.getProperties().get("sonar.resharper.projectName")).isEqualTo("MyLibraryTest");
+
+    assertThat(libraryTestProject.getProperties().get("sonar.stylecop.projectFilePath"))
+      .isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibraryTest/MyLibraryTest.csproj").getAbsolutePath());
   }
 
   @Test
