@@ -42,7 +42,7 @@ public class VisualStudioProjectParserTest {
     assertThat(project.outputType()).isEqualTo("Library");
     assertThat(project.assemblyName()).isEqualTo("MyLibrary");
     assertThat(project.propertyGroupConditions()).containsExactly(
-      " '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ",
+      "",
       " '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ");
     assertThat(project.outputPaths()).containsExactly(
       "bin\\Debug\\",
