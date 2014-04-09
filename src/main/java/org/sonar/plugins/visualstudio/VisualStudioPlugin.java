@@ -32,7 +32,7 @@ public class VisualStudioPlugin extends SonarPlugin {
   public static final String VISUAL_STUDIO_SOLUTION_PROPERTY_KEY = "sonar.visualstudio.solution";
   public static final String VISUAL_STUDIO_SKIP_PROPERTY_KEY = "sonar.visualstudio.skip";
 
-  private static final String CATEGORY = "Visual Studio";
+  private static final String CATEGORY = "Visual Studio Bootstrapper";
 
   @Override
   public List getExtensions() {
@@ -42,12 +42,12 @@ public class VisualStudioPlugin extends SonarPlugin {
         .category(CATEGORY)
         .name("Solution file")
         .description("Absolute or relative path from the project folder to the solution file to use. If set to empty, a \"*.sln\" file will be looked up in the project folder.")
-        .onQualifiers(Qualifiers.PROJECT)
+        .onlyOnQualifiers(Qualifiers.PROJECT)
         .build(),
       PropertyDefinition
         .builder(VISUAL_STUDIO_SKIP_PROPERTY_KEY)
         .category(CATEGORY)
-        .name("Skip Visual Studio analysis bootstrapping")
+        .name("Skip the analysis bootstrapping")
         .type(PropertyType.BOOLEAN)
         .description("Whether or not the analysis should be bootstrapped from Visual Studio files.")
         .onlyOnQualifiers(Qualifiers.PROJECT)
