@@ -21,6 +21,7 @@ package org.sonar.plugins.visualstudio;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ import org.sonar.api.utils.SonarException;
 import javax.annotation.Nullable;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 
 public class VisualStudioProjectBuilder extends ProjectBuilder {
@@ -99,6 +101,8 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
       File file = relativePathFile(projectFile.getParentFile(), filePath);
       if (!file.isFile()) {
         LOG.warn("Cannot find the file " + file.getAbsolutePath() + " of project " + projectName);
+      } else if (!isInSourceDir(file, projectFile.getParentFile())) {
+        LOG.warn("Skipping the file " + file.getAbsolutePath() + " of project " + projectName + " located outside of the source directory.");
       } else {
         module.addSourceFiles(file);
       }
@@ -127,6 +131,14 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
 
   private void setStyleCopProperties(ProjectDefinition module, File projectFile) {
     module.setProperty("sonar.stylecop.projectFilePath", projectFile.getAbsolutePath());
+  }
+
+  private static boolean isInSourceDir(File file, File folder) {
+    try {
+      return file.getCanonicalPath().replace('\\', '/').startsWith(folder.getCanonicalPath().replace('\\', '/') + "/");
+    } catch (IOException e) {
+      throw Throwables.propagate(e);
+    }
   }
 
   @Nullable

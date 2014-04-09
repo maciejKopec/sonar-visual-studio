@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+  	<Compile Include="..\OrphanFile.cs" />
     <Compile Include="Adder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
