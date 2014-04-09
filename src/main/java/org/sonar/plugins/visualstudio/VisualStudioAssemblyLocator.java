@@ -22,6 +22,8 @@ package org.sonar.plugins.visualstudio;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 
+import javax.annotation.Nullable;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.Collections;
@@ -38,6 +40,10 @@ public class VisualStudioAssemblyLocator {
     }
 
     String extension = extension(projectFile, project.outputType());
+    if (extension == null) {
+      return null;
+    }
+
     String assemblyFileName = project.assemblyName() + "." + extension;
 
     List<File> candidates = Lists.newArrayList();
@@ -58,6 +64,7 @@ public class VisualStudioAssemblyLocator {
   }
 
   @VisibleForTesting
+  @Nullable
   String extension(File projectFile, String outputType) {
     String result;
 
@@ -68,7 +75,7 @@ public class VisualStudioAssemblyLocator {
     } else if ("WinExe".equals(outputType)) {
       result = "exe";
     } else {
-      throw new IllegalArgumentException("Unsupported output type \"" + outputType + "\" for project " + projectFile.getAbsolutePath());
+      result = null;
     }
 
     return result;

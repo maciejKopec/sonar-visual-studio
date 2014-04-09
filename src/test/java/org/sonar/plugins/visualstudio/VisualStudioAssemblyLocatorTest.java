@@ -22,7 +22,6 @@ package org.sonar.plugins.visualstudio;
 import com.google.common.collect.ImmutableList;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 import org.sonar.plugins.visualstudio.VisualStudioAssemblyLocator.FileLastModifiedComparator;
 
@@ -34,9 +33,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class VisualStudioAssemblyLocatorTest {
-
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
 
   @Rule
   public TemporaryFolder tmp = new TemporaryFolder();
@@ -87,21 +83,23 @@ public class VisualStudioAssemblyLocatorTest {
   }
 
   @Test
-  public void supported_extensions() {
+  public void extensions() {
     assertThat(new VisualStudioAssemblyLocator().extension(mock(File.class), "Library")).isEqualTo("dll");
     assertThat(new VisualStudioAssemblyLocator().extension(mock(File.class), "Exe")).isEqualTo("exe");
     assertThat(new VisualStudioAssemblyLocator().extension(mock(File.class), "WinExe")).isEqualTo("exe");
+
+    assertThat(new VisualStudioAssemblyLocator().extension(mock(File.class), "Database")).isNull();
   }
 
   @Test
   public void unsupported_extension() {
-    File projectFile = mock(File.class);
-    when(projectFile.getAbsolutePath()).thenReturn("c:/foo.txt");
+    VisualStudioProject project = mock(VisualStudioProject.class);
+    when(project.outputType()).thenReturn("Database");
+    when(project.assemblyName()).thenReturn("foo");
+    when(project.outputPaths()).thenReturn(ImmutableList.of("bin/Debug"));
 
-    thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage("Unsupported output type \"SomeUnsupportedOutputType\" for project c:/foo.txt");
-
-    new VisualStudioAssemblyLocator().extension(projectFile, "SomeUnsupportedOutputType");
+    VisualStudioAssemblyLocator locator = new VisualStudioAssemblyLocator();
+    assertThat(locator.locateAssembly(mock(File.class), project)).isNull();
   }
 
   @Test
