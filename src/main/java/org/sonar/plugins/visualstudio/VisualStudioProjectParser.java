@@ -20,6 +20,7 @@
 package org.sonar.plugins.visualstudio;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Closeables;
@@ -48,6 +49,8 @@ public class VisualStudioProjectParser {
     private final ImmutableList.Builder<String> filesBuilder = ImmutableList.builder();
     private String outputType;
     private String assemblyName;
+    private String currentCondition;
+    private final ImmutableList.Builder<String> propertyGroupConditionsBuilder = ImmutableList.builder();
     private final ImmutableList.Builder<String> outputPathsBuilder = ImmutableList.builder();
 
     public VisualStudioProject parse(File file) {
@@ -70,6 +73,8 @@ public class VisualStudioProjectParser {
               handleOutputTypeTag();
             } else if ("AssemblyName".equals(tagName)) {
               handleAssemblyNameTag();
+            } else if ("PropertyGroup".equals(tagName)) {
+              handlePropertyGroupTag();
             } else if ("OutputPath".equals(tagName)) {
               handleOutputPathTag();
             }
@@ -84,7 +89,7 @@ public class VisualStudioProjectParser {
         Closeables.closeQuietly(reader);
       }
 
-      return new VisualStudioProject(filesBuilder.build(), outputType, assemblyName, outputPathsBuilder.build());
+      return new VisualStudioProject(filesBuilder.build(), outputType, assemblyName, propertyGroupConditionsBuilder.build(), outputPathsBuilder.build());
     }
 
     private void closeXmlStream() {
@@ -110,7 +115,12 @@ public class VisualStudioProjectParser {
       assemblyName = stream.getElementText();
     }
 
+    private void handlePropertyGroupTag() throws XMLStreamException {
+      currentCondition = Strings.nullToEmpty(getAttribute("Condition"));
+    }
+
     private void handleOutputPathTag() throws XMLStreamException {
+      propertyGroupConditionsBuilder.add(currentCondition);
       outputPathsBuilder.add(stream.getElementText());
     }
 

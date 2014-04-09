@@ -31,16 +31,18 @@ public class VisualStudioProjectTest {
   @Test
   public void test() {
     List<String> files = mock(List.class);
+    List<String> propertyGroupConditions = mock(List.class);
     List<String> outputPaths = mock(List.class);
 
-    VisualStudioProject project = new VisualStudioProject(files, "Library", null, outputPaths);
+    VisualStudioProject project = new VisualStudioProject(files, "Library", null, propertyGroupConditions, outputPaths);
 
     assertThat(project.files()).isSameAs(files);
     assertThat(project.outputType()).isEqualTo("Library");
     assertThat(project.assemblyName()).isNull();
+    assertThat(project.propertyGroupConditions()).isSameAs(propertyGroupConditions);
     assertThat(project.outputPaths()).isSameAs(outputPaths);
 
-    project = new VisualStudioProject(files, null, "MyLibrary", outputPaths);
+    project = new VisualStudioProject(files, null, "MyLibrary", propertyGroupConditions, outputPaths);
     assertThat(project.outputType()).isNull();
     assertThat(project.assemblyName()).isEqualTo("MyLibrary");
   }

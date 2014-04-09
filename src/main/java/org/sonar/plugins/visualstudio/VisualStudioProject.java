@@ -32,12 +32,14 @@ public class VisualStudioProject {
   private final List<String> files;
   private final String outputType;
   private final String assemblyName;
+  private final List<String> propertyGroupConditions;
   private final List<String> outputPaths;
 
-  public VisualStudioProject(List<String> files, @Nullable String outputType, @Nullable String assemblyName, List<String> outputPaths) {
+  public VisualStudioProject(List<String> files, @Nullable String outputType, @Nullable String assemblyName, List<String> propertyGroupConditions, List<String> outputPaths) {
     this.files = files;
     this.outputType = outputType;
     this.assemblyName = assemblyName;
+    this.propertyGroupConditions = propertyGroupConditions;
     this.outputPaths = outputPaths;
   }
 
@@ -53,6 +55,10 @@ public class VisualStudioProject {
   @Nullable
   public String assemblyName() {
     return assemblyName;
+  }
+
+  public List<String> propertyGroupConditions() {
+    return propertyGroupConditions;
   }
 
   public List<String> outputPaths() {
