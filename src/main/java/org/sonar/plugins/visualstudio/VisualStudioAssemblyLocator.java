@@ -21,6 +21,9 @@ package org.sonar.plugins.visualstudio;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.sonar.api.config.Settings;
 
 import javax.annotation.Nullable;
 
@@ -32,7 +35,14 @@ import java.util.List;
 
 public class VisualStudioAssemblyLocator {
 
+  private static final Logger LOG = LoggerFactory.getLogger(VisualStudioProjectBuilder.class);
   private static final Comparator<File> FILE_LAST_MODIFIED_COMPARATOR = new FileLastModifiedComparator();
+
+  private final Settings settings;
+
+  public VisualStudioAssemblyLocator(Settings settings) {
+    this.settings = settings;
+  }
 
   public File locateAssembly(File projectFile, VisualStudioProject project) {
     if (project.outputType() == null || project.assemblyName() == null || project.outputPaths().isEmpty()) {
@@ -45,14 +55,7 @@ public class VisualStudioAssemblyLocator {
     }
 
     String assemblyFileName = project.assemblyName() + "." + extension;
-
-    List<File> candidates = Lists.newArrayList();
-    for (String outputPath : project.outputPaths()) {
-      File candidate = new File(projectFile.getParentFile(), outputPath.replace('\\', '/') + '/' + assemblyFileName);
-      if (candidate.isFile()) {
-        candidates.add(candidate);
-      }
-    }
+    List<File> candidates = candidates(assemblyFileName, projectFile, project);
 
     if (candidates.isEmpty()) {
       return null;
@@ -79,6 +82,36 @@ public class VisualStudioAssemblyLocator {
     }
 
     return result;
+  }
+
+  private List<File> candidates(String assemblyFileName, File projectFile, VisualStudioProject project) {
+    List<File> candidates = Lists.newArrayList();
+    for (int i = 0; i < project.outputPaths().size(); i++) {
+      String condition = project.propertyGroupConditions().get(i);
+      if (matchesBuildConfigurationAndPlatform(condition)) {
+        String outputPath = project.outputPaths().get(i);
+
+        File candidate = new File(projectFile.getParentFile(), outputPath.replace('\\', '/') + '/' + assemblyFileName);
+        if (candidate.isFile()) {
+          candidates.add(candidate);
+        }
+      }
+    }
+    return candidates;
+  }
+
+  private boolean matchesBuildConfigurationAndPlatform(String condition) {
+    String buildConfiguration = settings.getString(VisualStudioPlugin.VISUAL_STUDIO_BUILD_CONFIGURATION);
+    String buildPlatform = settings.getString(VisualStudioPlugin.VISUAL_STUDIO_BUILD_PLATFORM);
+
+    if (buildConfiguration != null && buildPlatform != null) {
+      LOG.warn("The properties \"" + VisualStudioPlugin.VISUAL_STUDIO_BUILD_CONFIGURATION
+        + "\" and \"" + VisualStudioPlugin.VISUAL_STUDIO_BUILD_PLATFORM
+        + "\" are deprecated. The latest generated assembly is now picked up for analysis by default instead.");
+      return condition.contains(buildConfiguration) && condition.contains(buildPlatform);
+    }
+
+    return true;
   }
 
   public static class FileLastModifiedComparator implements Comparator<File>, Serializable {

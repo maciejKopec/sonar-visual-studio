@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableList;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.sonar.api.config.Settings;
 import org.sonar.plugins.visualstudio.VisualStudioAssemblyLocator.FileLastModifiedComparator;
 
 import java.io.File;
@@ -39,7 +40,8 @@ public class VisualStudioAssemblyLocatorTest {
 
   @Test
   public void test() throws Exception {
-    VisualStudioAssemblyLocator locator = new VisualStudioAssemblyLocator();
+    Settings settings = mock(Settings.class);
+    VisualStudioAssemblyLocator locator = new VisualStudioAssemblyLocator(settings);
 
     VisualStudioProject project = mock(VisualStudioProject.class);
 
@@ -65,6 +67,7 @@ public class VisualStudioAssemblyLocatorTest {
     when(project.outputType()).thenReturn("Library");
     when(project.assemblyName()).thenReturn("MyLibrary");
 
+    when(project.propertyGroupConditions()).thenReturn(ImmutableList.of(""));
     when(project.outputPaths()).thenReturn(ImmutableList.of("outputPath1"));
     assertThat(locator.locateAssembly(projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile1.getCanonicalPath());
 
@@ -75,20 +78,41 @@ public class VisualStudioAssemblyLocatorTest {
 
     File assemblyFile3 = tmp.newFile("outputPath3/MyLibrary.dll");
 
+    when(project.propertyGroupConditions()).thenReturn(ImmutableList.of("", ""));
     when(project.outputPaths()).thenReturn(ImmutableList.of("outputPath1", "outputPath3"));
     assertThat(locator.locateAssembly(projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile3.getCanonicalPath());
 
+    when(project.propertyGroupConditions()).thenReturn(ImmutableList.of("", ""));
     when(project.outputPaths()).thenReturn(ImmutableList.of("outputPath3", "outputPath1"));
+    assertThat(locator.locateAssembly(projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile3.getCanonicalPath());
+
+    // Build configuration and build platform tests
+
+    when(project.outputPaths()).thenReturn(ImmutableList.of("outputPath1", "outputPath3"));
+
+    when(settings.getString("sonar.dotnet.buildConfiguration")).thenReturn("Debug");
+    when(settings.getString("sonar.dotnet.buildPlatform")).thenReturn("AnyCPU");
+
+    when(project.propertyGroupConditions()).thenReturn(ImmutableList.of("Debug", "AnyCPU"));
+    assertThat(locator.locateAssembly(projectFile, project)).isNull();
+
+    when(project.propertyGroupConditions()).thenReturn(ImmutableList.of("Debug AnyCPU", "AnyCPU"));
+    assertThat(locator.locateAssembly(projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile1.getCanonicalPath());
+
+    when(project.propertyGroupConditions()).thenReturn(ImmutableList.of("Debug", "AnyCPU_Debug"));
+    assertThat(locator.locateAssembly(projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile3.getCanonicalPath());
+
+    when(settings.getString("sonar.dotnet.buildPlatform")).thenReturn(null);
     assertThat(locator.locateAssembly(projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile3.getCanonicalPath());
   }
 
   @Test
   public void extensions() {
-    assertThat(new VisualStudioAssemblyLocator().extension(mock(File.class), "Library")).isEqualTo("dll");
-    assertThat(new VisualStudioAssemblyLocator().extension(mock(File.class), "Exe")).isEqualTo("exe");
-    assertThat(new VisualStudioAssemblyLocator().extension(mock(File.class), "WinExe")).isEqualTo("exe");
+    assertThat(new VisualStudioAssemblyLocator(mock(Settings.class)).extension(mock(File.class), "Library")).isEqualTo("dll");
+    assertThat(new VisualStudioAssemblyLocator(mock(Settings.class)).extension(mock(File.class), "Exe")).isEqualTo("exe");
+    assertThat(new VisualStudioAssemblyLocator(mock(Settings.class)).extension(mock(File.class), "WinExe")).isEqualTo("exe");
 
-    assertThat(new VisualStudioAssemblyLocator().extension(mock(File.class), "Database")).isNull();
+    assertThat(new VisualStudioAssemblyLocator(mock(Settings.class)).extension(mock(File.class), "Database")).isNull();
   }
 
   @Test
@@ -98,7 +122,7 @@ public class VisualStudioAssemblyLocatorTest {
     when(project.assemblyName()).thenReturn("foo");
     when(project.outputPaths()).thenReturn(ImmutableList.of("bin/Debug"));
 
-    VisualStudioAssemblyLocator locator = new VisualStudioAssemblyLocator();
+    VisualStudioAssemblyLocator locator = new VisualStudioAssemblyLocator(mock(Settings.class));
     assertThat(locator.locateAssembly(mock(File.class), project)).isNull();
   }
 

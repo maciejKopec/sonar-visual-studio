@@ -49,7 +49,7 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
 
   @Override
   public void build(Context context) {
-    build(context, new VisualStudioAssemblyLocator());
+    build(context, new VisualStudioAssemblyLocator(settings));
   }
 
   public void build(Context context, VisualStudioAssemblyLocator assemblyLocator) {
