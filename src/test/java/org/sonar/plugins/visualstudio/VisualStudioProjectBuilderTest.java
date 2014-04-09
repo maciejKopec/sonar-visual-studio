@@ -45,7 +45,7 @@ public class VisualStudioProjectBuilderTest {
 
   @Test
   public void test() {
-    Context context = mockContext("solution_key", new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/"));
+    Context context = mockContext("solution:key", new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/"));
     ProjectDefinition solutionProject = context.projectReactor().getRoot();
 
     File workingDir = new File("target/VisualStudioProjectBuilderTest/.sonar");
@@ -73,7 +73,7 @@ public class VisualStudioProjectBuilderTest {
     verify(solutionProject, Mockito.times(2)).addSubProject(subModules.capture());
 
     ProjectDefinition libraryProject = subModules.getAllValues().get(0);
-    assertThat(libraryProject.getKey()).isEqualTo("solution_key:MyLibrary");
+    assertThat(libraryProject.getKey()).isEqualTo("solution:key:MyLibrary");
     assertThat(libraryProject.getName()).isEqualTo("MyLibrary");
     // Inherit the version
     assertThat(libraryProject.getVersion()).isNull();
@@ -97,7 +97,7 @@ public class VisualStudioProjectBuilderTest {
     assertThat(libraryProject.getProperties().get("sonar.resharper.projectName")).isEqualTo("MyLibrary");
 
     ProjectDefinition libraryTestProject = subModules.getAllValues().get(1);
-    assertThat(libraryTestProject.getKey()).isEqualTo("solution_key:MyLibraryTest");
+    assertThat(libraryTestProject.getKey()).isEqualTo("solution:key:MyLibraryTest");
     assertThat(libraryTestProject.getName()).isEqualTo("MyLibraryTest");
     // Inherit the version
     assertThat(libraryTestProject.getVersion()).isNull();
@@ -121,13 +121,13 @@ public class VisualStudioProjectBuilderTest {
   public void should_fail_with_several_solutions() {
     thrown.expectMessage("Found several .sln files in ");
 
-    Context context = mockContext("solution_key", new File("src/test/resources/VisualStudioProjectBuilderTest/several_sln/"));
+    Context context = mockContext("solution:key", new File("src/test/resources/VisualStudioProjectBuilderTest/several_sln/"));
     new VisualStudioProjectBuilder(mock(Settings.class)).build(context);
   }
 
   @Test
   public void should_pick_chosen_solution() {
-    Context context = mockContext("solution_key", new File("src/test/resources/VisualStudioProjectBuilderTest/several_sln/"));
+    Context context = mockContext("solution:key", new File("src/test/resources/VisualStudioProjectBuilderTest/several_sln/"));
     ProjectDefinition solutionProject = context.projectReactor().getRoot();
 
     Settings settings = mock(Settings.class);
@@ -143,7 +143,7 @@ public class VisualStudioProjectBuilderTest {
     thrown.expectMessage("java.io.FileNotFoundException");
     thrown.expectMessage("non_existing.sln");
 
-    Context context = mockContext("solution_key", new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/"));
+    Context context = mockContext("solution:key", new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/"));
 
     Settings settings = mock(Settings.class);
     when(settings.getString(VisualStudioPlugin.VISUAL_STUDIO_SOLUTION_PROPERTY_KEY)).thenReturn("non_existing.sln");
@@ -153,7 +153,7 @@ public class VisualStudioProjectBuilderTest {
 
   @Test
   public void no_solution() {
-    Context context = mockContext("solution_key", new File("src/test/resources/VisualStudioProjectBuilderTest/no_sln/"));
+    Context context = mockContext("solution:key", new File("src/test/resources/VisualStudioProjectBuilderTest/no_sln/"));
     ProjectDefinition solutionProject = context.projectReactor().getRoot();
 
     new VisualStudioProjectBuilder(mock(Settings.class)).build(context);
@@ -165,7 +165,7 @@ public class VisualStudioProjectBuilderTest {
   public void should_fail_when_sonar_modules_property_is_set() {
     thrown.expectMessage("Do not use the Visual Studio bootstrapper and set the \"sonar.modules\" property at the same time.");
 
-    Context context = mockContext("solution_key", new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/"));
+    Context context = mockContext("solution:key", new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/"));
 
     Settings settings = mock(Settings.class);
     when(settings.hasKey("sonar.modules")).thenReturn(true);

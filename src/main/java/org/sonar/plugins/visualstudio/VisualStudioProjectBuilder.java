@@ -88,7 +88,7 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
 
     module.setBaseDir(projectFile.getParentFile());
     module.setSourceDirs(projectFile.getParentFile());
-    module.setWorkDir(new File(solutionProject.getWorkDir(), solutionProject.getKey() + "_" + projectName));
+    module.setWorkDir(new File(solutionProject.getWorkDir(), solutionProject.getKey().replace(':', '_') + "_" + projectName));
 
     for (String filePath : project.files()) {
       File file = relativePathFile(projectFile.getParentFile(), filePath);
