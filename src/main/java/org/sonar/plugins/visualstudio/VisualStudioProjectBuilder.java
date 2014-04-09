@@ -125,7 +125,7 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
       return;
     }
 
-    LOG.info("Setting the FxCop assembly to analyze to: " + assembly.getAbsolutePath());
+    LOG.info("Setting the FxCop assembly to analyze for project \"" + module.getName() + "\" to: " + assembly.getAbsolutePath());
 
     module.setProperty("sonar.cs.fxcop.assembly", assembly.getAbsolutePath());
     module.setProperty("sonar.vbnet.fxcop.assembly", assembly.getAbsolutePath());
