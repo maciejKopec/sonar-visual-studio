@@ -33,6 +33,7 @@ public class VisualStudioPlugin extends SonarPlugin {
   public static final String VISUAL_STUDIO_SKIP_PROPERTY_KEY = "sonar.visualstudio.skip";
   public static final String VISUAL_STUDIO_BUILD_CONFIGURATION = "sonar.dotnet.buildConfiguration";
   public static final String VISUAL_STUDIO_BUILD_PLATFORM = "sonar.dotnet.buildPlatform";
+  public static final String VISUAL_STUDIO_OUTPUT_PATH_PROPERTY_KEY = "sonar.visualstudio.outputPath";
 
   private static final String CATEGORY = "Visual Studio Bootstrapper";
 
@@ -52,6 +53,13 @@ public class VisualStudioPlugin extends SonarPlugin {
         .name("Skip the analysis bootstrapping")
         .type(PropertyType.BOOLEAN)
         .description("Whether or not the analysis should be bootstrapped from Visual Studio files.")
+        .onlyOnQualifiers(Qualifiers.PROJECT)
+        .build(),
+      PropertyDefinition
+        .builder(VISUAL_STUDIO_OUTPUT_PATH_PROPERTY_KEY)
+        .category(CATEGORY)
+        .name("Assemblies output path")
+        .description("Overrides the assemblies output path, useful for Team Foundation Server builds.")
         .onlyOnQualifiers(Qualifiers.PROJECT)
         .build(),
 

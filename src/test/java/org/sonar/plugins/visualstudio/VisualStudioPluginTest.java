@@ -36,7 +36,8 @@ public class VisualStudioPluginTest {
     assertThat(nonProperties(extensions)).containsOnly(VisualStudioProjectBuilder.class);
     assertThat(propertyKeys(extensions)).containsOnly(
       "sonar.visualstudio.solution",
-      "sonar.visualstudio.skip");
+      "sonar.visualstudio.skip",
+      "sonar.visualstudio.outputPath");
   }
 
   private List nonProperties(List extensions) {

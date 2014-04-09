@@ -20,6 +20,8 @@
 package org.sonar.plugins.visualstudio;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,11 +87,24 @@ public class VisualStudioAssemblyLocator {
   }
 
   private List<File> candidates(String assemblyFileName, File projectFile, VisualStudioProject project) {
+    String outputPath = settings.getString(VisualStudioPlugin.VISUAL_STUDIO_OUTPUT_PATH_PROPERTY_KEY);
+    if (outputPath != null) {
+      File candidate = new File(projectFile.getParentFile(), outputPath.replace('\\', '/') + '/' + assemblyFileName);
+
+      Preconditions.checkArgument(
+        candidate.exists(),
+        "Unable to find the assembly \"" + assemblyFileName + "\" in the output path directory specified by \""
+          + VisualStudioPlugin.VISUAL_STUDIO_OUTPUT_PATH_PROPERTY_KEY
+          + "\": " + outputPath);
+
+      return ImmutableList.of(candidate);
+    }
+
     List<File> candidates = Lists.newArrayList();
     for (int i = 0; i < project.outputPaths().size(); i++) {
       String condition = project.propertyGroupConditions().get(i);
       if (matchesBuildConfigurationAndPlatform(condition)) {
-        String outputPath = project.outputPaths().get(i);
+        outputPath = project.outputPaths().get(i);
 
         File candidate = new File(projectFile.getParentFile(), outputPath.replace('\\', '/') + '/' + assemblyFileName);
         if (candidate.isFile()) {
