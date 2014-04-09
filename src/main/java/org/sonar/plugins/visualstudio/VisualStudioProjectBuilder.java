@@ -125,8 +125,8 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
       return;
     }
 
-    module.setProperty("sonar.cs.fxcop.assemblies", assembly.getAbsolutePath());
-    module.setProperty("sonar.vbnet.fxcop.assemblies", assembly.getAbsolutePath());
+    module.setProperty("sonar.cs.fxcop.assembly", assembly.getAbsolutePath());
+    module.setProperty("sonar.vbnet.fxcop.assembly", assembly.getAbsolutePath());
   }
 
   private void setReSharperProperties(ProjectDefinition module, String projectName, File solutionFile) {
