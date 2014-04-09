@@ -141,11 +141,11 @@ public class VisualStudioProjectBuilderTest {
     ProjectDefinition solutionProject = context.projectReactor().getRoot();
 
     Settings settings = mock(Settings.class);
-    when(settings.getString(VisualStudioPlugin.VISUAL_STUDIO_SOLUTION_PROPERTY_KEY)).thenReturn("empty_solution.sln");
+    when(settings.getString(VisualStudioPlugin.VISUAL_STUDIO_SOLUTION_PROPERTY_KEY)).thenReturn("solution_without_tests.sln");
 
     new VisualStudioProjectBuilder(settings).build(context);
 
-    verify(solutionProject, Mockito.never()).addSubProject(Mockito.any(ProjectDefinition.class));
+    verify(solutionProject, Mockito.times(1)).addSubProject(Mockito.any(ProjectDefinition.class));
   }
 
   @Test
@@ -181,6 +181,14 @@ public class VisualStudioProjectBuilderTest {
     when(settings.hasKey("sonar.modules")).thenReturn(true);
 
     new VisualStudioProjectBuilder(settings).build(context);
+  }
+
+  @Test
+  public void should_fail_when_no_visual_studio_projects_are_found() {
+    thrown.expectMessage("No Visual Studio projects were found.");
+
+    Context context = mockContext("solution:key", new File("src/test/resources/VisualStudioProjectBuilderTest/no_projects/"));
+    new VisualStudioProjectBuilder(mock(Settings.class)).build(context);
   }
 
   private static Context mockContext(String key, File baseDir) {

@@ -19,6 +19,7 @@
  */
 package org.sonar.plugins.visualstudio;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -66,17 +67,21 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
 
     solutionProject.resetSourceDirs();
 
-    VisualStudioSolution solution = new VisualStudioSolutionParser().parse(solutionFile);
+    boolean hasModules = false;
 
+    VisualStudioSolution solution = new VisualStudioSolutionParser().parse(solutionFile);
     VisualStudioProjectParser projectParser = new VisualStudioProjectParser();
     for (VisualStudioSolutionProject project : solution.projects()) {
       File projectFile = relativePathFile(solutionFile.getParentFile(), project.path());
       if (!projectFile.isFile()) {
         LOG.warn("Unable to find the Visual Studio project file " + projectFile.getAbsolutePath());
       } else {
+        hasModules = true;
         buildModule(solutionProject, project.name(), projectFile, projectParser.parse(projectFile), assemblyLocator, solutionFile);
       }
     }
+
+    Preconditions.checkState(hasModules, "No Visual Studio projects were found.");
   }
 
   private void buildModule(ProjectDefinition solutionProject, String projectName, File projectFile, VisualStudioProject project, VisualStudioAssemblyLocator assemblyLocator,
