@@ -20,6 +20,7 @@
 package org.sonar.plugins.visualstudio;
 
 import com.google.common.collect.ImmutableList;
+import org.sonar.api.PropertyType;
 import org.sonar.api.SonarPlugin;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.resources.Qualifiers;
@@ -29,16 +30,27 @@ import java.util.List;
 public class VisualStudioPlugin extends SonarPlugin {
 
   public static final String VISUAL_STUDIO_SOLUTION_PROPERTY_KEY = "sonar.visualstudio.solution";
+  public static final String VISUAL_STUDIO_SKIP_PROPERTY_KEY = "sonar.visualstudio.skip";
+
+  private static final String CATEGORY = "Visual Studio";
 
   @Override
   public List getExtensions() {
     return ImmutableList.of(
       PropertyDefinition
         .builder(VISUAL_STUDIO_SOLUTION_PROPERTY_KEY)
-        .category("Visual Studio")
+        .category(CATEGORY)
         .name("Solution file")
         .description("Absolute or relative path from the project folder to the solution file to use. If set to empty, a \"*.sln\" file will be looked up in the project folder.")
         .onQualifiers(Qualifiers.PROJECT)
+        .build(),
+      PropertyDefinition
+        .builder(VISUAL_STUDIO_SKIP_PROPERTY_KEY)
+        .category(CATEGORY)
+        .name("Skip Visual Studio analysis bootstrapping")
+        .type(PropertyType.BOOLEAN)
+        .description("Whether or not the analysis should be bootstrapped from Visual Studio files.")
+        .onlyOnQualifiers(Qualifiers.PROJECT)
         .build(),
 
       VisualStudioProjectBuilder.class);

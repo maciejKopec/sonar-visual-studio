@@ -55,6 +55,11 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
   public void build(Context context, VisualStudioAssemblyLocator assemblyLocator) {
     ProjectDefinition solutionProject = context.projectReactor().getRoot();
 
+    if (settings.getBoolean(VisualStudioPlugin.VISUAL_STUDIO_SKIP_PROPERTY_KEY)) {
+      LOG.info("The analysis bootstraper for Visual Studio projects is disabled, unset the property \"" + VisualStudioPlugin.VISUAL_STUDIO_SKIP_PROPERTY_KEY + "\" to enable.");
+      return;
+    }
+
     File solutionFile = getSolutionFile(solutionProject.getBaseDir());
     if (solutionFile == null) {
       LOG.info("No Visual Studio solution file found.");

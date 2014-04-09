@@ -172,6 +172,19 @@ public class VisualStudioProjectBuilderTest {
   }
 
   @Test
+  public void should_not_run_when_skip_property_is_set() {
+    Context context = mockContext("solution:key", new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/"));
+    ProjectDefinition solutionProject = context.projectReactor().getRoot();
+
+    Settings settings = mock(Settings.class);
+    when(settings.getBoolean(VisualStudioPlugin.VISUAL_STUDIO_SKIP_PROPERTY_KEY)).thenReturn(true);
+
+    new VisualStudioProjectBuilder(settings).build(context);
+
+    verify(solutionProject, Mockito.never()).addSubProject(Mockito.any(ProjectDefinition.class));
+  }
+
+  @Test
   public void should_fail_when_sonar_modules_property_is_set() {
     thrown.expectMessage("Do not use the Visual Studio bootstrapper and set the \"sonar.modules\" property at the same time.");
 
