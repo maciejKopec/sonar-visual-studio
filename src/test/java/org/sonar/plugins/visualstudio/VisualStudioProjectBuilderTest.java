@@ -54,11 +54,11 @@ public class VisualStudioProjectBuilderTest {
     final File assemblyFile = mock(File.class);
     when(assemblyFile.getAbsolutePath()).thenReturn("c:/MyLibrary.dll");
     VisualStudioAssemblyLocator assemblyLocator = mock(VisualStudioAssemblyLocator.class);
-    when(assemblyLocator.locateAssembly(Mockito.any(File.class), Mockito.any(VisualStudioProject.class))).thenAnswer(new Answer<File>() {
+    when(assemblyLocator.locateAssembly(Mockito.anyString(), Mockito.any(File.class), Mockito.any(VisualStudioProject.class))).thenAnswer(new Answer<File>() {
 
       @Override
       public File answer(InvocationOnMock invocation) throws Throwable {
-        File projectFile = (File) invocation.getArguments()[0];
+        File projectFile = (File) invocation.getArguments()[1];
 
         return "MyLibrary.csproj".equals(projectFile.getName()) ? assemblyFile : null;
       }

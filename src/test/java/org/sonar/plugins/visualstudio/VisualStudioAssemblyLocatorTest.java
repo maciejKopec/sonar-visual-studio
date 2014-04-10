@@ -46,16 +46,16 @@ public class VisualStudioAssemblyLocatorTest {
     VisualStudioProject project = mock(VisualStudioProject.class);
 
     when(project.outputType()).thenReturn(null);
-    assertThat(locator.locateAssembly(mock(File.class), project)).isNull();
+    assertThat(locator.locateAssembly("project", mock(File.class), project)).isNull();
 
     when(project.outputType()).thenReturn("Library");
     when(project.assemblyName()).thenReturn(null);
-    assertThat(locator.locateAssembly(mock(File.class), project)).isNull();
+    assertThat(locator.locateAssembly("project", mock(File.class), project)).isNull();
 
     when(project.outputType()).thenReturn("Library");
     when(project.assemblyName()).thenReturn("MyLibrary");
     when(project.outputPaths()).thenReturn(Collections.EMPTY_LIST);
-    assertThat(locator.locateAssembly(mock(File.class), project)).isNull();
+    assertThat(locator.locateAssembly("project", mock(File.class), project)).isNull();
 
     File projectFile = tmp.newFile("Solution.sln");
     tmp.newFolder("outputPath1");
@@ -69,10 +69,10 @@ public class VisualStudioAssemblyLocatorTest {
 
     when(project.propertyGroupConditions()).thenReturn(ImmutableList.of(""));
     when(project.outputPaths()).thenReturn(ImmutableList.of("outputPath1"));
-    assertThat(locator.locateAssembly(projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile1.getCanonicalPath());
+    assertThat(locator.locateAssembly("project", projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile1.getCanonicalPath());
 
     when(project.outputPaths()).thenReturn(ImmutableList.of("outputPath2"));
-    assertThat(locator.locateAssembly(projectFile, project)).isNull();
+    assertThat(locator.locateAssembly("project", projectFile, project)).isNull();
 
     Thread.sleep(1500L);
 
@@ -80,11 +80,11 @@ public class VisualStudioAssemblyLocatorTest {
 
     when(project.propertyGroupConditions()).thenReturn(ImmutableList.of("", ""));
     when(project.outputPaths()).thenReturn(ImmutableList.of("outputPath1", "outputPath3"));
-    assertThat(locator.locateAssembly(projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile3.getCanonicalPath());
+    assertThat(locator.locateAssembly("project", projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile3.getCanonicalPath());
 
     when(project.propertyGroupConditions()).thenReturn(ImmutableList.of("", ""));
     when(project.outputPaths()).thenReturn(ImmutableList.of("outputPath3", "outputPath1"));
-    assertThat(locator.locateAssembly(projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile3.getCanonicalPath());
+    assertThat(locator.locateAssembly("project", projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile3.getCanonicalPath());
 
     // Build configuration and build platform tests
 
@@ -94,16 +94,16 @@ public class VisualStudioAssemblyLocatorTest {
     when(settings.getString("sonar.dotnet.buildPlatform")).thenReturn("AnyCPU");
 
     when(project.propertyGroupConditions()).thenReturn(ImmutableList.of("Debug", "AnyCPU"));
-    assertThat(locator.locateAssembly(projectFile, project)).isNull();
+    assertThat(locator.locateAssembly("project", projectFile, project)).isNull();
 
     when(project.propertyGroupConditions()).thenReturn(ImmutableList.of("Debug AnyCPU", "AnyCPU"));
-    assertThat(locator.locateAssembly(projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile1.getCanonicalPath());
+    assertThat(locator.locateAssembly("project", projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile1.getCanonicalPath());
 
     when(project.propertyGroupConditions()).thenReturn(ImmutableList.of("Debug", "AnyCPU_Debug"));
-    assertThat(locator.locateAssembly(projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile3.getCanonicalPath());
+    assertThat(locator.locateAssembly("project", projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile3.getCanonicalPath());
 
     when(settings.getString("sonar.dotnet.buildPlatform")).thenReturn(null);
-    assertThat(locator.locateAssembly(projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile3.getCanonicalPath());
+    assertThat(locator.locateAssembly("project", projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile3.getCanonicalPath());
 
     // Assembly output path
 
@@ -117,7 +117,7 @@ public class VisualStudioAssemblyLocatorTest {
     when(project.propertyGroupConditions()).thenReturn(ImmutableList.of("", ""));
     when(project.outputPaths()).thenReturn(ImmutableList.of("outputPath1", "outputPath3"));
 
-    assertThat(locator.locateAssembly(projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile4.getCanonicalPath());
+    assertThat(locator.locateAssembly("project", projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile4.getCanonicalPath());
   }
 
   @Test
@@ -137,7 +137,7 @@ public class VisualStudioAssemblyLocatorTest {
     when(project.outputPaths()).thenReturn(ImmutableList.of("bin/Debug"));
 
     VisualStudioAssemblyLocator locator = new VisualStudioAssemblyLocator(mock(Settings.class));
-    assertThat(locator.locateAssembly(mock(File.class), project)).isNull();
+    assertThat(locator.locateAssembly("project", mock(File.class), project)).isNull();
   }
 
   @Test

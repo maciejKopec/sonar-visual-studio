@@ -119,7 +119,7 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
   }
 
   private void setFxCopProperties(ProjectDefinition module, File projectFile, VisualStudioProject project, VisualStudioAssemblyLocator assemblyLocator) {
-    File assembly = assemblyLocator.locateAssembly(projectFile, project);
+    File assembly = assemblyLocator.locateAssembly(module.getName(), projectFile, project);
     if (assembly == null) {
       LOG.warn("Unable to locate the assembly of project " + projectFile.getAbsolutePath());
       return;
