@@ -121,11 +121,8 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
   private void setFxCopProperties(ProjectDefinition module, File projectFile, VisualStudioProject project, VisualStudioAssemblyLocator assemblyLocator) {
     File assembly = assemblyLocator.locateAssembly(module.getName(), projectFile, project);
     if (assembly == null) {
-      LOG.warn("Unable to locate the assembly of project " + projectFile.getAbsolutePath());
       return;
     }
-
-    LOG.info("Setting the FxCop assembly to analyze for project \"" + module.getName() + "\" to: " + assembly.getAbsolutePath());
 
     module.setProperty("sonar.cs.fxcop.assembly", assembly.getAbsolutePath());
     module.setProperty("sonar.vbnet.fxcop.assembly", assembly.getAbsolutePath());
