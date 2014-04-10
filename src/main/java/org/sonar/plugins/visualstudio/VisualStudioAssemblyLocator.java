@@ -112,9 +112,9 @@ public class VisualStudioAssemblyLocator {
     String buildPlatform = settings.getString(VisualStudioPlugin.VISUAL_STUDIO_BUILD_PLATFORM);
 
     if (buildConfiguration != null && buildPlatform != null) {
-      LOG.warn("The properties \"" + VisualStudioPlugin.VISUAL_STUDIO_BUILD_CONFIGURATION
-        + "\" and \"" + VisualStudioPlugin.VISUAL_STUDIO_BUILD_PLATFORM
-        + "\" are deprecated. The latest generated assembly is now picked up for analysis by default instead.");
+      LOG.warn("The properties \"" + VisualStudioPlugin.VISUAL_STUDIO_BUILD_CONFIGURATION + "\" and \""
+        + VisualStudioPlugin.VISUAL_STUDIO_BUILD_PLATFORM + "\" are deprecated with no replacement. \""
+        + buildConfiguration + "\" and \"" + buildPlatform + "\" will be used for this analysis. Default behavior is now to analyze the most recently generated assembly.");
       return condition.contains(buildConfiguration) && condition.contains(buildPlatform);
     }
 
