@@ -62,8 +62,6 @@ public class VisualStudioAssemblyLocatorTest {
     tmp.newFolder("outputPath2");
     tmp.newFolder("outputPath3");
 
-    tmp.newFolder("other_outputPath");
-
     File assemblyFile1 = tmp.newFile("outputPath1/MyLibrary.dll");
 
     when(project.outputType()).thenReturn("Library");
@@ -109,7 +107,17 @@ public class VisualStudioAssemblyLocatorTest {
 
     // Assembly output path
 
-    when(settings.getString("sonar.visualstudio.outputPath")).thenReturn("");
+    when(settings.getString("sonar.dotnet.buildConfiguration")).thenReturn(null);
+    when(settings.getString("sonar.dotnet.buildPlatform")).thenReturn(null);
+
+    File outputPathFolder = tmp.newFolder("other_outputPath");
+    File assemblyFile4 = tmp.newFile("other_outputPath/MyLibrary.dll");
+
+    when(settings.getString("sonar.visualstudio.outputPath")).thenReturn(outputPathFolder.getAbsolutePath());
+    when(project.propertyGroupConditions()).thenReturn(ImmutableList.of("", ""));
+    when(project.outputPaths()).thenReturn(ImmutableList.of("outputPath1", "outputPath3"));
+
+    assertThat(locator.locateAssembly(projectFile, project).getCanonicalPath()).isEqualTo(assemblyFile4.getCanonicalPath());
   }
 
   @Test
