@@ -34,6 +34,7 @@ public class VisualStudioPlugin extends SonarPlugin {
   public static final String VISUAL_STUDIO_BUILD_CONFIGURATION = "sonar.dotnet.buildConfiguration";
   public static final String VISUAL_STUDIO_BUILD_PLATFORM = "sonar.dotnet.buildPlatform";
   public static final String VISUAL_STUDIO_OUTPUT_PATH_PROPERTY_KEY = "sonar.visualstudio.outputPath";
+  public static final String VISUAL_STUDIO_OLD_SOLUTION_PROPERTY_KEY = "sonar.dotnet.visualstudio.solution.file";
 
   private static final String CATEGORY = "Visual Studio Bootstrapper";
 
@@ -42,6 +43,7 @@ public class VisualStudioPlugin extends SonarPlugin {
     return ImmutableList.of(
       PropertyDefinition
         .builder(VISUAL_STUDIO_SOLUTION_PROPERTY_KEY)
+        .deprecatedKey(VISUAL_STUDIO_OLD_SOLUTION_PROPERTY_KEY)
         .category(CATEGORY)
         .name("Solution file")
         .description("Absolute or relative path from the project folder to the solution file to use. If set to empty, a \"*.sln\" file will be looked up in the project folder.")
