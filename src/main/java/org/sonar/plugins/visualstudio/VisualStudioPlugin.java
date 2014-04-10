@@ -35,6 +35,7 @@ public class VisualStudioPlugin extends SonarPlugin {
   public static final String VISUAL_STUDIO_BUILD_PLATFORM = "sonar.dotnet.buildPlatform";
   public static final String VISUAL_STUDIO_OUTPUT_PATH_PROPERTY_KEY = "sonar.visualstudio.outputPath";
   public static final String VISUAL_STUDIO_OLD_SOLUTION_PROPERTY_KEY = "sonar.dotnet.visualstudio.solution.file";
+  public static final String VISUAL_STUDIO_OLD_DOTNET_ASSEMBLIES_PROPERTY_KEY = "sonar.dotnet.assemblies";
 
   private static final String CATEGORY = "Visual Studio Bootstrapper";
 
@@ -59,6 +60,7 @@ public class VisualStudioPlugin extends SonarPlugin {
         .build(),
       PropertyDefinition
         .builder(VISUAL_STUDIO_OUTPUT_PATH_PROPERTY_KEY)
+        .deprecatedKey(VISUAL_STUDIO_OLD_DOTNET_ASSEMBLIES_PROPERTY_KEY)
         .category(CATEGORY)
         .name("Assemblies output path")
         .description("Overrides the assemblies output path, useful for Team Foundation Server builds.")
