@@ -37,7 +37,12 @@ public class VisualStudioPluginTest {
     assertThat(propertyKeys(extensions)).containsOnly(
       "sonar.visualstudio.solution",
       "sonar.visualstudio.skip",
-      "sonar.visualstudio.outputPath");
+      "sonar.visualstudio.outputPath",
+
+      "sonar.dotnet.visualstudio.solution.file",
+      "sonar.dotnet.assemblies",
+      "sonar.dotnet.buildConfiguration",
+      "sonar.dotnet.buildPlatform");
   }
 
   private List nonProperties(List extensions) {

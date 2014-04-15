@@ -119,11 +119,11 @@ public class VisualStudioAssemblyLocator {
   }
 
   private boolean matchesBuildConfigurationAndPlatform(String condition) {
-    String buildConfiguration = settings.getString(VisualStudioPlugin.VISUAL_STUDIO_BUILD_CONFIGURATION);
-    String buildPlatform = settings.getString(VisualStudioPlugin.VISUAL_STUDIO_BUILD_PLATFORM);
+    String buildConfiguration = settings.getString(VisualStudioPlugin.VISUAL_STUDIO_OLD_BUILD_CONFIGURATION_PROPERTY_KEY);
+    String buildPlatform = settings.getString(VisualStudioPlugin.VISUAL_STUDIO_OLD_BUILD_PLATFORM_PROPERTY_KEY);
 
     if (buildConfiguration != null && buildPlatform != null) {
-      LOG.warn("The properties \"" + VisualStudioPlugin.VISUAL_STUDIO_BUILD_CONFIGURATION + "\" and \"" + VisualStudioPlugin.VISUAL_STUDIO_BUILD_PLATFORM + "\" are deprecated");
+      LOG.warn("The properties \"" + VisualStudioPlugin.VISUAL_STUDIO_OLD_BUILD_CONFIGURATION_PROPERTY_KEY + "\" and \"" + VisualStudioPlugin.VISUAL_STUDIO_OLD_BUILD_PLATFORM_PROPERTY_KEY + "\" are deprecated");
       return condition.contains(buildConfiguration) && condition.contains(buildPlatform);
     }
 

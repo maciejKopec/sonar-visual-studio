@@ -31,17 +31,20 @@ public class VisualStudioPlugin extends SonarPlugin {
 
   public static final String VISUAL_STUDIO_SOLUTION_PROPERTY_KEY = "sonar.visualstudio.solution";
   public static final String VISUAL_STUDIO_SKIP_PROPERTY_KEY = "sonar.visualstudio.skip";
-  public static final String VISUAL_STUDIO_BUILD_CONFIGURATION = "sonar.dotnet.buildConfiguration";
-  public static final String VISUAL_STUDIO_BUILD_PLATFORM = "sonar.dotnet.buildPlatform";
   public static final String VISUAL_STUDIO_OUTPUT_PATH_PROPERTY_KEY = "sonar.visualstudio.outputPath";
+
   public static final String VISUAL_STUDIO_OLD_SOLUTION_PROPERTY_KEY = "sonar.dotnet.visualstudio.solution.file";
   public static final String VISUAL_STUDIO_OLD_DOTNET_ASSEMBLIES_PROPERTY_KEY = "sonar.dotnet.assemblies";
+  public static final String VISUAL_STUDIO_OLD_BUILD_CONFIGURATION_PROPERTY_KEY = "sonar.dotnet.buildConfiguration";
+  public static final String VISUAL_STUDIO_OLD_BUILD_PLATFORM_PROPERTY_KEY = "sonar.dotnet.buildPlatform";
 
   private static final String CATEGORY = "Visual Studio Bootstrapper";
 
   @Override
   public List getExtensions() {
     return ImmutableList.of(
+      VisualStudioProjectBuilder.class,
+
       PropertyDefinition
         .builder(VISUAL_STUDIO_SOLUTION_PROPERTY_KEY)
         .deprecatedKey(VISUAL_STUDIO_OLD_SOLUTION_PROPERTY_KEY)
@@ -67,7 +70,23 @@ public class VisualStudioPlugin extends SonarPlugin {
         .onlyOnQualifiers(Qualifiers.PROJECT)
         .build(),
 
-      VisualStudioProjectBuilder.class);
+      deprecatedPropertyDefinition(VISUAL_STUDIO_OLD_SOLUTION_PROPERTY_KEY),
+      deprecatedPropertyDefinition(VISUAL_STUDIO_OLD_DOTNET_ASSEMBLIES_PROPERTY_KEY),
+      deprecatedPropertyDefinition(VISUAL_STUDIO_OLD_BUILD_CONFIGURATION_PROPERTY_KEY),
+      deprecatedPropertyDefinition(VISUAL_STUDIO_OLD_BUILD_PLATFORM_PROPERTY_KEY));
+  }
+
+  private static PropertyDefinition deprecatedPropertyDefinition(String oldKey) {
+    return PropertyDefinition
+      .builder(oldKey)
+      .name(oldKey)
+      .description("This property is deprecated and will be removed in a future version.<br />"
+        + "You should stop using it as soon as possible.<br />"
+        + "Consult the migration guide for guidance.")
+      .category(CATEGORY)
+      .subCategory("Deprecated")
+      .onQualifiers(Qualifiers.PROJECT, Qualifiers.MODULE)
+      .build();
   }
 
 }
