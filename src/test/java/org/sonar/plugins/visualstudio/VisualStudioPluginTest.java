@@ -40,7 +40,6 @@ public class VisualStudioPluginTest {
       "sonar.visualstudio.outputPath",
 
       "sonar.dotnet.visualstudio.solution.file",
-      "sonar.dotnet.assemblies",
       "sonar.dotnet.buildConfiguration",
       "sonar.dotnet.buildPlatform");
   }
