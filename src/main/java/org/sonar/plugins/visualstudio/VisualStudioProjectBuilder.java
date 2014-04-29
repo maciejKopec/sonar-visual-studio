@@ -94,7 +94,7 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
   private void buildModule(ProjectDefinition solutionProject, String projectName, File projectFile, VisualStudioProject project, VisualStudioAssemblyLocator assemblyLocator,
     File solutionFile) {
     ProjectDefinition module = ProjectDefinition.create()
-      .setKey(solutionProject.getKey() + ":" + projectName)
+      .setKey(projectKey(solutionProject.getKey()) + ":" + projectName)
       .setName(projectName);
     solutionProject.addSubProject(module);
 
@@ -169,6 +169,26 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
 
   private static File relativePathFile(File file, String relativePath) {
     return new File(file, relativePath.replace('\\', '/'));
+  }
+
+  private String projectKey(String projectKey) {
+    if ("unsafe".equals(settings.getString(VisualStudioPlugin.VISUAL_STUDIO_PROJECT_KEY_STRATEGY_PROPERTY_KEY))) {
+      int i = projectKey.indexOf(':');
+
+      if (i == -1) {
+        LOG.warn("Unset the deprecated uncessary property \"" + VisualStudioPlugin.VISUAL_STUDIO_PROJECT_KEY_STRATEGY_PROPERTY_KEY + "\" used to analyze this project. "
+          + "This property support will soon be removed, and unsetting it will *NOT* affect this particular project.");
+      } else {
+        String unsafeProjectKey = projectKey.substring(0, i);
+
+        LOG.warn("Unset the deprecated uncessary property \"" + VisualStudioPlugin.VISUAL_STUDIO_PROJECT_KEY_STRATEGY_PROPERTY_KEY + "\" used to analyze this project. "
+          + "You will need to update the project key from the unsafe \"" + unsafeProjectKey + "\" value to \"" + projectKey + "\".");
+
+        return unsafeProjectKey;
+      }
+    }
+
+    return projectKey;
   }
 
 }

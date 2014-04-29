@@ -128,6 +128,44 @@ public class VisualStudioProjectBuilderTest {
   }
 
   @Test
+  public void should_support_the_unsafe_project_key_strategy() {
+    Context context = mockContext("solution:key", new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/"));
+    ProjectDefinition solutionProject = context.projectReactor().getRoot();
+
+    Settings settings = mock(Settings.class);
+    when(settings.getString("sonar.visualstudio.projectKeyStrategy")).thenReturn("unsafe");
+    new VisualStudioProjectBuilder(settings).build(context, mock(VisualStudioAssemblyLocator.class));
+
+    ArgumentCaptor<ProjectDefinition> subModules = ArgumentCaptor.forClass(ProjectDefinition.class);
+    verify(solutionProject, Mockito.times(2)).addSubProject(subModules.capture());
+
+    ProjectDefinition libraryProject = subModules.getAllValues().get(0);
+    assertThat(libraryProject.getKey()).isEqualTo("solution:MyLibrary");
+
+    ProjectDefinition libraryTestProject = subModules.getAllValues().get(1);
+    assertThat(libraryTestProject.getKey()).isEqualTo("solution:MyLibraryTest");
+  }
+
+  @Test
+  public void should_use_safe_project_key_strategy_when_no_colon_present_in_original_project_key() {
+    Context context = mockContext("solution_key", new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/"));
+    ProjectDefinition solutionProject = context.projectReactor().getRoot();
+
+    Settings settings = mock(Settings.class);
+    when(settings.getString("sonar.visualstudio.projectKeyStrategy")).thenReturn("unsafe");
+    new VisualStudioProjectBuilder(settings).build(context, mock(VisualStudioAssemblyLocator.class));
+
+    ArgumentCaptor<ProjectDefinition> subModules = ArgumentCaptor.forClass(ProjectDefinition.class);
+    verify(solutionProject, Mockito.times(2)).addSubProject(subModules.capture());
+
+    ProjectDefinition libraryProject = subModules.getAllValues().get(0);
+    assertThat(libraryProject.getKey()).isEqualTo("solution_key:MyLibrary");
+
+    ProjectDefinition libraryTestProject = subModules.getAllValues().get(1);
+    assertThat(libraryTestProject.getKey()).isEqualTo("solution_key:MyLibraryTest");
+  }
+
+  @Test
   public void should_fail_with_several_solutions() {
     thrown.expectMessage("Found several .sln files in ");
 

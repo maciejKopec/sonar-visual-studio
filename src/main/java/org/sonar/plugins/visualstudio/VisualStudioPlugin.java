@@ -37,6 +37,8 @@ public class VisualStudioPlugin extends SonarPlugin {
   public static final String VISUAL_STUDIO_OLD_BUILD_CONFIGURATION_PROPERTY_KEY = "sonar.dotnet.buildConfiguration";
   public static final String VISUAL_STUDIO_OLD_BUILD_PLATFORM_PROPERTY_KEY = "sonar.dotnet.buildPlatform";
 
+  public static final String VISUAL_STUDIO_PROJECT_KEY_STRATEGY_PROPERTY_KEY = "sonar.visualstudio.projectKeyStrategy";
+
   private static final String CATEGORY = "Visual Studio Bootstrapper";
 
   @Override
