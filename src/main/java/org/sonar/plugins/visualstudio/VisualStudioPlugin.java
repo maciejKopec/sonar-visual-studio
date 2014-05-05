@@ -58,6 +58,7 @@ public class VisualStudioPlugin extends SonarPlugin {
         .builder(VISUAL_STUDIO_ENABLE_PROPERTY_KEY)
         .category(CATEGORY)
         .name("Enable the analysis bootstrapping")
+        .defaultValue("false")
         .type(PropertyType.BOOLEAN)
         .description("Whether or not the analysis should be bootstrapped from Visual Studio files.")
         .onQualifiers(Qualifiers.PROJECT)
