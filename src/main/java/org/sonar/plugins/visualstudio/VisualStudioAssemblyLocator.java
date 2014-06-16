@@ -53,7 +53,7 @@ public class VisualStudioAssemblyLocator {
 
     String extension = extension(projectFile, project.outputType());
     if (extension == null) {
-      LOG.error("Unable to locate the assembly of the unsupported output type: " + project.outputType());
+      LOG.error("Unable to locate the assembly of the unsupported output type \"" + project.outputType() + "\" of project: " + projectFile.getAbsolutePath());
       return null;
     }
 
@@ -79,11 +79,13 @@ public class VisualStudioAssemblyLocator {
   String extension(File projectFile, String outputType) {
     String result;
 
-    if ("Library".equals(outputType)) {
+    String lowerOutputType = outputType.toLowerCase();
+
+    if ("library".equals(lowerOutputType)) {
       result = "dll";
-    } else if ("Exe".equals(outputType)) {
+    } else if ("exe".equals(lowerOutputType)) {
       result = "exe";
-    } else if ("WinExe".equals(outputType)) {
+    } else if ("winexe".equals(lowerOutputType)) {
       result = "exe";
     } else {
       result = null;
@@ -123,7 +125,8 @@ public class VisualStudioAssemblyLocator {
     String buildPlatform = settings.getString(VisualStudioPlugin.VISUAL_STUDIO_OLD_BUILD_PLATFORM_PROPERTY_KEY);
 
     if (buildConfiguration != null && buildPlatform != null) {
-      LOG.warn("The properties \"" + VisualStudioPlugin.VISUAL_STUDIO_OLD_BUILD_CONFIGURATION_PROPERTY_KEY + "\" and \"" + VisualStudioPlugin.VISUAL_STUDIO_OLD_BUILD_PLATFORM_PROPERTY_KEY + "\" are deprecated");
+      LOG.warn("The properties \"" + VisualStudioPlugin.VISUAL_STUDIO_OLD_BUILD_CONFIGURATION_PROPERTY_KEY + "\" and \""
+        + VisualStudioPlugin.VISUAL_STUDIO_OLD_BUILD_PLATFORM_PROPERTY_KEY + "\" are deprecated");
       return condition.contains(buildConfiguration) && condition.contains(buildPlatform);
     }
 
