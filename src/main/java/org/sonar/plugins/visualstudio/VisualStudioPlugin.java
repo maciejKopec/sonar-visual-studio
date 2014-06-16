@@ -51,23 +51,23 @@ public class VisualStudioPlugin extends SonarPlugin {
         .deprecatedKey(VISUAL_STUDIO_OLD_SOLUTION_PROPERTY_KEY)
         .category(CATEGORY)
         .name("Solution file")
-        .description("Absolute or relative path from the project folder to the solution file to use. If set to empty, a \"*.sln\" file will be looked up in the project folder.")
+        .description("Absolute or relative path to the solution file to use. If not set or empty, a solution (\"*.sln\") file will be looked up.")
         .onlyOnQualifiers(Qualifiers.PROJECT)
         .build(),
       PropertyDefinition
         .builder(VISUAL_STUDIO_ENABLE_PROPERTY_KEY)
         .category(CATEGORY)
-        .name("Enable the analysis bootstrapping")
+        .name("Turn on")
         .defaultValue("false")
         .type(PropertyType.BOOLEAN)
-        .description("Whether or not the analysis should be bootstrapped from Visual Studio files.")
+        .description("Whether or not the analysis should be bootstrapped from Visual Studio files. Can be enabled (or disabled) globally and on a per-project basis.")
         .onQualifiers(Qualifiers.PROJECT)
         .build(),
       PropertyDefinition
         .builder(VISUAL_STUDIO_OUTPUT_PATH_PROPERTY_KEY)
         .category(CATEGORY)
         .name("Assemblies output path")
-        .description("Overrides the assemblies output path, useful for Team Foundation Server builds.")
+        .description("Overrides the assemblies output path. Useful for Team Foundation Server builds. The path may be absolute or relative to the solution directory.")
         .onlyOnQualifiers(Qualifiers.PROJECT)
         .build(),
 
