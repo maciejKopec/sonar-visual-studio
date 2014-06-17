@@ -268,6 +268,45 @@ public class VisualStudioProjectBuilderTest {
     new VisualStudioProjectBuilder(settings).build(context);
   }
 
+  @Test
+  public void should_escape_accents_and_whitespaces() {
+    Context context = mockContext("solution:key", new File("src/test/resources/VisualStudioProjectBuilderTest/accents/"));
+    ProjectDefinition solutionProject = context.projectReactor().getRoot();
+
+    File workingDir = new File("target/VisualStudioProjectBuilderTest/.sonar");
+    when(solutionProject.getWorkDir()).thenReturn(workingDir);
+
+    Settings settings = new Settings();
+    settings.setProperty(VisualStudioPlugin.VISUAL_STUDIO_ENABLE_PROPERTY_KEY, true);
+    // These properties must be forwarded
+    settings.setProperty("uber.sonar.something", "foobar");
+    settings.setProperty("foo_bar.sonar.somethingElse", "foobar2");
+
+    new VisualStudioProjectBuilder(settings).build(context);
+
+    ArgumentCaptor<ProjectDefinition> subModules = ArgumentCaptor.forClass(ProjectDefinition.class);
+    verify(solutionProject, Mockito.times(2)).addSubProject(subModules.capture());
+
+    ProjectDefinition uberProject = subModules.getAllValues().get(0);
+    assertThat(uberProject.getKey()).isEqualTo("solution:key:uber");
+    assertThat(uberProject.getName()).isEqualTo("über");
+    assertThat(uberProject.getWorkDir()).isEqualTo(new File(workingDir, "solution_key_uber"));
+    assertThat(uberProject.getProperties().getProperty("sonar.something")).isEqualTo("foobar");
+
+    ProjectDefinition foobarProject = subModules.getAllValues().get(1);
+    assertThat(foobarProject.getKey()).isEqualTo("solution:key:foo_bar");
+    assertThat(foobarProject.getName()).isEqualTo("foo bar");
+    assertThat(foobarProject.getWorkDir()).isEqualTo(new File(workingDir, "solution_key_foo_bar"));
+    assertThat(foobarProject.getProperties().getProperty("sonar.somethingElse")).isEqualTo("foobar2");
+  }
+
+  @Test
+  public void escapeProjectName() {
+    assertThat(VisualStudioProjectBuilder.escapeProjectName("foo")).isEqualTo("foo");
+    assertThat(VisualStudioProjectBuilder.escapeProjectName("héhé")).isEqualTo("hehe");
+    assertThat(VisualStudioProjectBuilder.escapeProjectName("über")).isEqualTo("uber");
+  }
+
   private static Context mockContext(String key, File baseDir) {
     ProjectDefinition project = mock(ProjectDefinition.class);
     when(project.getKey()).thenReturn(key);

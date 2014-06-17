@@ -19,6 +19,7 @@
  */
 package org.sonar.plugins.visualstudio;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
@@ -34,6 +35,7 @@ import javax.annotation.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.Normalizer;
 import java.util.Collection;
 import java.util.Map;
 
@@ -94,14 +96,16 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
 
   private void buildModule(ProjectDefinition solutionProject, String projectName, File projectFile, VisualStudioProject project, VisualStudioAssemblyLocator assemblyLocator,
     File solutionFile) {
+    String escapedProjectName = escapeProjectName(projectName);
+
     ProjectDefinition module = ProjectDefinition.create()
-      .setKey(projectKey(solutionProject.getKey()) + ":" + escapeProjectName(projectName))
+      .setKey(projectKey(solutionProject.getKey()) + ":" + escapedProjectName)
       .setName(projectName);
     solutionProject.addSubProject(module);
 
     module.setBaseDir(projectFile.getParentFile());
     module.setSourceDirs(projectFile.getParentFile());
-    module.setWorkDir(new File(solutionProject.getWorkDir(), solutionProject.getKey().replace(':', '_') + "_" + escapeProjectName(projectName)));
+    module.setWorkDir(new File(solutionProject.getWorkDir(), solutionProject.getKey().replace(':', '_') + "_" + escapedProjectName));
 
     for (String filePath : project.files()) {
       File file = relativePathFile(projectFile.getParentFile(), filePath);
@@ -114,7 +118,7 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
       }
     }
 
-    forwardModuleProperties(module, escapeProjectName(projectName));
+    forwardModuleProperties(module, escapedProjectName);
     setFxCopProperties(module, projectFile, project, assemblyLocator);
     setReSharperProperties(module, projectName, solutionFile);
     setStyleCopProperties(module, projectFile);
@@ -201,8 +205,12 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
     return projectKey;
   }
 
-  private String escapeProjectName(String projectName) {
-    return projectName;
+  @VisibleForTesting
+  static String escapeProjectName(String projectName) {
+    String escaped = Normalizer.normalize(projectName, Normalizer.Form.NFD);
+    escaped = escaped.replaceAll("\\p{M}", "");
+    escaped = escaped.replace(' ', '_');
+    return escaped;
   }
 
 }
