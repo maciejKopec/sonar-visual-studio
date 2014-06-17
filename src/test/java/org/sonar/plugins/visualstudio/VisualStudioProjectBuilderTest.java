@@ -65,8 +65,12 @@ public class VisualStudioProjectBuilderTest {
 
     });
 
-    Settings settings = mock(Settings.class);
-    when(settings.getBoolean(VisualStudioPlugin.VISUAL_STUDIO_ENABLE_PROPERTY_KEY)).thenReturn(true);
+    Settings settings = new Settings();
+    settings.setProperty(VisualStudioPlugin.VISUAL_STUDIO_ENABLE_PROPERTY_KEY, true);
+    // This property must be forwarded
+    settings.setProperty("MyLibrary.sonar.something", "foobar");
+    // This property must be overriden
+    settings.setProperty("MyLibrary.sonar.cs.fxcop.assembly", "foobar");
 
     new VisualStudioProjectBuilder(settings).build(context, assemblyLocator);
 
@@ -91,6 +95,10 @@ public class VisualStudioProjectBuilderTest {
     assertThat(libraryProject.getSourceFiles()).hasSize(1);
     assertThat(new File(libraryProject.getSourceFiles().get(0)).getAbsoluteFile())
       .isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibrary/Adder.cs").getAbsoluteFile());
+
+    assertThat(libraryProject.getProperties().get("sonar.something")).isEqualTo("foobar");
+
+    assertThat(libraryProject.getProperties().get("sonar.cs.fxcop.assembly")).isEqualTo("c:/MyLibrary.dll");
 
     assertThat(libraryProject.getProperties().get("sonar.cs.fxcop.assembly")).isEqualTo("c:/MyLibrary.dll");
     assertThat(libraryProject.getProperties().get("sonar.vbnet.fxcop.assembly")).isEqualTo("c:/MyLibrary.dll");

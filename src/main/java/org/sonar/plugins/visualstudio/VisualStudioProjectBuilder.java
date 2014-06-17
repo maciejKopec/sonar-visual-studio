@@ -35,6 +35,7 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 
 public class VisualStudioProjectBuilder extends ProjectBuilder {
 
@@ -94,13 +95,13 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
   private void buildModule(ProjectDefinition solutionProject, String projectName, File projectFile, VisualStudioProject project, VisualStudioAssemblyLocator assemblyLocator,
     File solutionFile) {
     ProjectDefinition module = ProjectDefinition.create()
-      .setKey(projectKey(solutionProject.getKey()) + ":" + projectName)
+      .setKey(projectKey(solutionProject.getKey()) + ":" + escapeProjectName(projectName))
       .setName(projectName);
     solutionProject.addSubProject(module);
 
     module.setBaseDir(projectFile.getParentFile());
     module.setSourceDirs(projectFile.getParentFile());
-    module.setWorkDir(new File(solutionProject.getWorkDir(), solutionProject.getKey().replace(':', '_') + "_" + projectName));
+    module.setWorkDir(new File(solutionProject.getWorkDir(), solutionProject.getKey().replace(':', '_') + "_" + escapeProjectName(projectName)));
 
     for (String filePath : project.files()) {
       File file = relativePathFile(projectFile.getParentFile(), filePath);
@@ -113,9 +114,18 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
       }
     }
 
+    forwardModuleProperties(module, escapeProjectName(projectName));
     setFxCopProperties(module, projectFile, project, assemblyLocator);
     setReSharperProperties(module, projectName, solutionFile);
     setStyleCopProperties(module, projectFile);
+  }
+
+  private void forwardModuleProperties(ProjectDefinition module, String escapedProjectName) {
+    for (Map.Entry<String, String> entry : settings.getProperties().entrySet()) {
+      if (entry.getKey().startsWith(escapedProjectName + ".")) {
+        module.setProperty(entry.getKey().substring(escapedProjectName.length() + 1), entry.getValue());
+      }
+    }
   }
 
   private void setFxCopProperties(ProjectDefinition module, File projectFile, VisualStudioProject project, VisualStudioAssemblyLocator assemblyLocator) {
@@ -189,6 +199,10 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
     }
 
     return projectKey;
+  }
+
+  private String escapeProjectName(String projectName) {
+    return projectName;
   }
 
 }
