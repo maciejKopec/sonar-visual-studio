@@ -53,7 +53,7 @@ public class VisualStudioAssemblyLocator {
 
     String extension = extension(projectFile, project.outputType());
     if (extension == null) {
-      LOG.error("Unable to locate the assembly of the unsupported output type \"" + project.outputType() + "\" of project: " + projectFile.getAbsolutePath());
+      LOG.warn("Unable to locate the assembly of the unsupported output type \"" + project.outputType() + "\" of project: " + projectFile.getAbsolutePath());
       return null;
     }
 
