@@ -32,6 +32,7 @@ import org.sonar.api.batch.bootstrap.ProjectReactor;
 import org.sonar.api.config.Settings;
 
 import java.io.File;
+import java.util.regex.PatternSyntaxException;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -67,6 +68,8 @@ public class VisualStudioProjectBuilderTest {
 
     Settings settings = new Settings();
     settings.setProperty(VisualStudioPlugin.VISUAL_STUDIO_ENABLE_PROPERTY_KEY, true);
+    settings.setProperty(VisualStudioPlugin.VISUAL_STUDIO_TEST_PROJECT_PATTERN, ".*Test");
+
     // This property must be forwarded
     settings.setProperty("MyLibrary.sonar.something", "foobar");
     // This property must be overriden
@@ -89,12 +92,16 @@ public class VisualStudioProjectBuilderTest {
     assertThat(libraryProject.getSourceDirs()).hasSize(1);
     assertThat(new File(libraryProject.getSourceDirs().get(0)).getAbsoluteFile())
       .isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibrary/").getAbsoluteFile());
+    assertThat(libraryProject.getTestDirs()).hasSize(1);
+    assertThat(new File(libraryProject.getTestDirs().get(0)).getAbsoluteFile())
+      .isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibrary/").getAbsoluteFile());
     assertThat(libraryProject.getBaseDir().getAbsoluteFile()).isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibrary/").getAbsoluteFile());
     assertThat(libraryProject.getWorkDir()).isEqualTo(new File(workingDir, "solution_key_MyLibrary"));
 
     assertThat(libraryProject.getSourceFiles()).hasSize(1);
     assertThat(new File(libraryProject.getSourceFiles().get(0)).getAbsoluteFile())
       .isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibrary/Adder.cs").getAbsoluteFile());
+    assertThat(libraryProject.getTestFiles()).isEmpty();
 
     assertThat(libraryProject.getProperties().get("sonar.something")).isEqualTo("foobar");
 
@@ -121,10 +128,14 @@ public class VisualStudioProjectBuilderTest {
     assertThat(libraryTestProject.getSourceDirs()).hasSize(1);
     assertThat(new File(libraryTestProject.getSourceDirs().get(0)).getAbsoluteFile())
       .isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibraryTest/").getAbsoluteFile());
+    assertThat(libraryTestProject.getTestDirs()).hasSize(1);
+    assertThat(new File(libraryTestProject.getTestDirs().get(0)).getAbsoluteFile())
+      .isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibraryTest/").getAbsoluteFile());
     assertThat(libraryTestProject.getWorkDir()).isEqualTo(new File(workingDir, "solution_key_MyLibraryTest"));
 
-    assertThat(libraryTestProject.getSourceFiles()).hasSize(1);
-    assertThat(new File(libraryTestProject.getSourceFiles().get(0)).getAbsoluteFile())
+    assertThat(libraryTestProject.getSourceFiles()).isEmpty();
+    assertThat(libraryTestProject.getTestFiles()).hasSize(1);
+    assertThat(new File(libraryTestProject.getTestFiles().get(0)).getAbsoluteFile())
       .isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibraryTest/AdderTest.cs").getAbsoluteFile());
 
     assertThat(libraryTestProject.getProperties().get("sonar.cs.fxcop.assembly")).isNull();
@@ -305,6 +316,19 @@ public class VisualStudioProjectBuilderTest {
     assertThat(VisualStudioProjectBuilder.escapeProjectName("foo")).isEqualTo("foo");
     assertThat(VisualStudioProjectBuilder.escapeProjectName("héhé")).isEqualTo("hehe");
     assertThat(VisualStudioProjectBuilder.escapeProjectName("über")).isEqualTo("uber");
+  }
+
+  @Test
+  public void invalid_test_project_pattern() {
+    Context context = mockContext("solution:key", new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/"));
+
+    Settings settings = new Settings();
+    settings.setProperty(VisualStudioPlugin.VISUAL_STUDIO_ENABLE_PROPERTY_KEY, true);
+    settings.setProperty(VisualStudioPlugin.VISUAL_STUDIO_TEST_PROJECT_PATTERN, "?");
+
+    thrown.expect(PatternSyntaxException.class);
+
+    new VisualStudioProjectBuilder(settings).build(context);
   }
 
   private static Context mockContext(String key, File baseDir) {

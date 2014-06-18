@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.text.Normalizer;
 import java.util.Collection;
 import java.util.Map;
+import java.util.regex.PatternSyntaxException;
 
 public class VisualStudioProjectBuilder extends ProjectBuilder {
 
@@ -105,7 +106,10 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
 
     module.setBaseDir(projectFile.getParentFile());
     module.setSourceDirs(projectFile.getParentFile());
+    module.setTestDirs(projectFile.getParentFile());
     module.setWorkDir(new File(solutionProject.getWorkDir(), solutionProject.getKey().replace(':', '_') + "_" + escapedProjectName));
+
+    boolean isTestProject = isTestProject(projectName);
 
     for (String filePath : project.files()) {
       File file = relativePathFile(projectFile.getParentFile(), filePath);
@@ -114,7 +118,11 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
       } else if (!isInSourceDir(file, projectFile.getParentFile())) {
         LOG.warn("Skipping the file " + file.getAbsolutePath() + " of project " + projectName + " located outside of the source directory.");
       } else {
-        module.addSourceFiles(file);
+        if (isTestProject) {
+          module.addTestFiles(file);
+        } else {
+          module.addSourceFiles(file);
+        }
       }
     }
 
@@ -211,6 +219,16 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
     escaped = escaped.replaceAll("\\p{M}", "");
     escaped = escaped.replace(' ', '_');
     return escaped;
+  }
+
+  private boolean isTestProject(String projectName) {
+    String testProjectPattern = settings.getString(VisualStudioPlugin.VISUAL_STUDIO_TEST_PROJECT_PATTERN);
+    try {
+      return testProjectPattern != null && projectName.matches(testProjectPattern);
+    } catch (PatternSyntaxException e) {
+      LOG.error("The syntax of the regular expression of the \"" + VisualStudioPlugin.VISUAL_STUDIO_TEST_PROJECT_PATTERN + "\" property is invalid: " + testProjectPattern);
+      throw Throwables.propagate(e);
+    }
   }
 
 }

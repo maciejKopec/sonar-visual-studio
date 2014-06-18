@@ -38,6 +38,7 @@ public class VisualStudioPluginTest {
       "sonar.visualstudio.solution",
       "sonar.visualstudio.enable",
       "sonar.visualstudio.outputPath",
+      "sonar.visualstudio.testProjectPattern",
 
       "sonar.dotnet.visualstudio.solution.file",
       "sonar.dotnet.buildConfiguration",

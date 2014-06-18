@@ -32,6 +32,7 @@ public class VisualStudioPlugin extends SonarPlugin {
   public static final String VISUAL_STUDIO_SOLUTION_PROPERTY_KEY = "sonar.visualstudio.solution";
   public static final String VISUAL_STUDIO_ENABLE_PROPERTY_KEY = "sonar.visualstudio.enable";
   public static final String VISUAL_STUDIO_OUTPUT_PATH_PROPERTY_KEY = "sonar.visualstudio.outputPath";
+  public static final String VISUAL_STUDIO_TEST_PROJECT_PATTERN = "sonar.visualstudio.testProjectPattern";
 
   public static final String VISUAL_STUDIO_OLD_SOLUTION_PROPERTY_KEY = "sonar.dotnet.visualstudio.solution.file";
   public static final String VISUAL_STUDIO_OLD_BUILD_CONFIGURATION_PROPERTY_KEY = "sonar.dotnet.buildConfiguration";
@@ -69,6 +70,15 @@ public class VisualStudioPlugin extends SonarPlugin {
         .name("Assemblies output path")
         .description("Overrides the assemblies output path. Useful for Team Foundation Server builds. The path may be absolute or relative to the solution directory.")
         .onlyOnQualifiers(Qualifiers.PROJECT)
+        .build(),
+      PropertyDefinition
+        .builder(VISUAL_STUDIO_TEST_PROJECT_PATTERN)
+        .category(CATEGORY)
+        .name("Test project pattern")
+        .defaultValue(".*[Tt]est.*")
+        .type(PropertyType.REGULAR_EXPRESSION)
+        .description("Regular expression matched by test project names.")
+        .onQualifiers(Qualifiers.PROJECT)
         .build(),
 
       deprecatedPropertyDefinition(VISUAL_STUDIO_OLD_SOLUTION_PROPERTY_KEY),
