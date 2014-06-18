@@ -63,11 +63,15 @@ public class VisualStudioProjectParser {
         reader = new InputStreamReader(new FileInputStream(file), Charsets.UTF_8);
         stream = xmlFactory.createXMLStreamReader(reader);
 
+        boolean inItemGroup = false;
+        int inItemGroupNestingLevel = 0;
+
         while (stream.hasNext()) {
-          if (stream.next() == XMLStreamConstants.START_ELEMENT) {
+          int next = stream.next();
+          if (next == XMLStreamConstants.START_ELEMENT) {
             String tagName = stream.getLocalName();
 
-            if ("Compile".equals(tagName)) {
+            if (inItemGroup && inItemGroupNestingLevel == 0 && "Compile".equals(tagName)) {
               handleCompileTag();
             } else if ("OutputType".equals(tagName)) {
               handleOutputTypeTag();
@@ -77,6 +81,21 @@ public class VisualStudioProjectParser {
               handlePropertyGroupTag();
             } else if ("OutputPath".equals(tagName)) {
               handleOutputPathTag();
+            }
+
+            if ("ItemGroup".equals(tagName)) {
+              inItemGroup = true;
+              inItemGroupNestingLevel = 0;
+            } else if (inItemGroup) {
+              inItemGroupNestingLevel++;
+            }
+          } else if (next == XMLStreamConstants.END_ELEMENT) {
+            String tagName = stream.getLocalName();
+
+            if ("ItemGroup".equals(tagName)) {
+              inItemGroup = false;
+            } else if (inItemGroup) {
+              inItemGroupNestingLevel--;
             }
           }
         }
