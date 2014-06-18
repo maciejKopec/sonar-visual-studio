@@ -1,7 +1,7 @@
 
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}")=  "über",    "über\über.csproj", "{3A865091-31FB-4454-8AC4-3B2467019A49}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}")=  "über",    "uber\uber.csproj", "{3A865091-31FB-4454-8AC4-3B2467019A49}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}")=  "foo bar",    "foo bar\foo bar.csproj", "{E61F0D12-F397-45B3-93A5-C9EE50460B3A}"
 EndProject
