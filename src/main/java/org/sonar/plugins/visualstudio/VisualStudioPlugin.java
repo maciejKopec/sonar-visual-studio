@@ -33,6 +33,7 @@ public class VisualStudioPlugin extends SonarPlugin {
   public static final String VISUAL_STUDIO_ENABLE_PROPERTY_KEY = "sonar.visualstudio.enable";
   public static final String VISUAL_STUDIO_OUTPUT_PATH_PROPERTY_KEY = "sonar.visualstudio.outputPath";
   public static final String VISUAL_STUDIO_TEST_PROJECT_PATTERN = "sonar.visualstudio.testProjectPattern";
+  public static final String VISUAL_STUDIO_SKIPPED_PROJECTS = "sonar.visualstudio.skippedProjects";
 
   public static final String VISUAL_STUDIO_OLD_SOLUTION_PROPERTY_KEY = "sonar.dotnet.visualstudio.solution.file";
   public static final String VISUAL_STUDIO_OLD_BUILD_CONFIGURATION_PROPERTY_KEY = "sonar.dotnet.buildConfiguration";
@@ -79,6 +80,14 @@ public class VisualStudioPlugin extends SonarPlugin {
         .type(PropertyType.REGULAR_EXPRESSION)
         .description("Regular expression matched by test project names.")
         .onQualifiers(Qualifiers.PROJECT)
+        .build(),
+      PropertyDefinition
+        .builder(VISUAL_STUDIO_SKIPPED_PROJECTS)
+        .category(CATEGORY)
+        .name("Projects to skip")
+        .defaultValue("")
+        .description("Comma-separated list of project names to skip.")
+        .onlyOnQualifiers(Qualifiers.PROJECT)
         .build(),
 
       deprecatedPropertyDefinition(VISUAL_STUDIO_OLD_SOLUTION_PROPERTY_KEY),

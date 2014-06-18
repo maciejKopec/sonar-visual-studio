@@ -21,8 +21,10 @@ package org.sonar.plugins.visualstudio;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +39,9 @@ import java.io.File;
 import java.io.IOException;
 import java.text.Normalizer;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.PatternSyntaxException;
 
 public class VisualStudioProjectBuilder extends ProjectBuilder {
@@ -78,17 +82,24 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
 
     solutionProject.resetSourceDirs();
 
+    Set<String> skippedProjects = skippedProjects();
     boolean hasModules = false;
 
     VisualStudioSolution solution = new VisualStudioSolutionParser().parse(solutionFile);
     VisualStudioProjectParser projectParser = new VisualStudioProjectParser();
     for (VisualStudioSolutionProject project : solution.projects()) {
-      File projectFile = relativePathFile(solutionFile.getParentFile(), project.path());
-      if (!projectFile.isFile()) {
-        LOG.warn("Unable to find the Visual Studio project file " + projectFile.getAbsolutePath());
+      String escapedProjectName = escapeProjectName(project.name());
+
+      if (skippedProjects.contains(escapeProjectName(escapedProjectName))) {
+        LOG.info("Skipping the project \"" + escapedProjectName + "\" because it is listed in the property \"" + VisualStudioPlugin.VISUAL_STUDIO_SKIPPED_PROJECTS + "\".");
       } else {
-        hasModules = true;
-        buildModule(solutionProject, project.name(), projectFile, projectParser.parse(projectFile), assemblyLocator, solutionFile);
+        File projectFile = relativePathFile(solutionFile.getParentFile(), project.path());
+        if (!projectFile.isFile()) {
+          LOG.warn("Unable to find the Visual Studio project file " + projectFile.getAbsolutePath());
+        } else {
+          hasModules = true;
+          buildModule(solutionProject, project.name(), projectFile, projectParser.parse(projectFile), assemblyLocator, solutionFile);
+        }
       }
     }
 
@@ -233,6 +244,12 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
       LOG.error("The syntax of the regular expression of the \"" + VisualStudioPlugin.VISUAL_STUDIO_TEST_PROJECT_PATTERN + "\" property is invalid: " + testProjectPattern);
       throw Throwables.propagate(e);
     }
+  }
+
+  private Set<String> skippedProjects() {
+    String skippedProjects = settings.getString(VisualStudioPlugin.VISUAL_STUDIO_SKIPPED_PROJECTS);
+    return skippedProjects == null ?
+      Collections.<String>emptySet() : ImmutableSet.<String>builder().addAll(Splitter.on(',').omitEmptyStrings().split(skippedProjects)).build();
   }
 
 }
