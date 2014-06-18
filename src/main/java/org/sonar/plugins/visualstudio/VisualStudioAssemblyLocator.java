@@ -20,6 +20,7 @@
 package org.sonar.plugins.visualstudio;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,25 +96,31 @@ public class VisualStudioAssemblyLocator {
   }
 
   private List<File> candidates(String assemblyFileName, File projectFile, VisualStudioProject project) {
-    String explicitOutputPath = settings.getString(VisualStudioPlugin.VISUAL_STUDIO_OUTPUT_PATH_PROPERTY_KEY);
-    if (explicitOutputPath != null) {
-      File candidate = new File(new File(explicitOutputPath.replace('\\', '/')), assemblyFileName);
-      LOG.info("Using the assembly output path specified using the property \"" + VisualStudioPlugin.VISUAL_STUDIO_OUTPUT_PATH_PROPERTY_KEY + "\" set to: " + explicitOutputPath);
-      return Lists.newArrayList(candidate);
-    }
-
     List<File> candidates = Lists.newArrayList();
-    for (int i = 0; i < project.outputPaths().size(); i++) {
-      String outputPath = project.outputPaths().get(i);
-      File candidate = new File(projectFile.getParentFile(), outputPath.replace('\\', '/') + '/' + assemblyFileName);
 
-      if (!candidate.isFile()) {
-        LOG.info("The following candidate assembly was not built: " + candidate.getAbsolutePath());
-      } else if (matchesBuildConfigurationAndPlatform(project.propertyGroupConditions().get(i))) {
-        LOG.info("The following candidate assembly was found: " + candidate.getAbsolutePath());
+    String explicitOutputPaths = settings.getString(VisualStudioPlugin.VISUAL_STUDIO_OUTPUT_PATHS_PROPERTY_KEY);
+    if (explicitOutputPaths != null) {
+      LOG.info("Using the assembly output paths specified using the property \"" + VisualStudioPlugin.VISUAL_STUDIO_OUTPUT_PATHS_PROPERTY_KEY
+        + "\" set to: " + explicitOutputPaths);
+
+      for (String explicitOutputPath : Splitter.on(',').omitEmptyStrings().split(explicitOutputPaths)) {
+        File candidate = new File(new File(explicitOutputPath.replace('\\', '/')), assemblyFileName);
         candidates.add(candidate);
-      } else {
-        LOG.info("The following candidate assembly was found, but rejected because it does not match the request build configuration and platform: " + candidate.getAbsolutePath());
+      }
+    } else {
+      for (int i = 0; i < project.outputPaths().size(); i++) {
+        String outputPath = project.outputPaths().get(i);
+        File candidate = new File(projectFile.getParentFile(), outputPath.replace('\\', '/') + '/' + assemblyFileName);
+
+        if (!candidate.isFile()) {
+          LOG.info("The following candidate assembly was not built: " + candidate.getAbsolutePath());
+        } else if (matchesBuildConfigurationAndPlatform(project.propertyGroupConditions().get(i))) {
+          LOG.info("The following candidate assembly was found: " + candidate.getAbsolutePath());
+          candidates.add(candidate);
+        } else {
+          LOG.info("The following candidate assembly was found, but rejected because it does not match the request build configuration and platform: "
+            + candidate.getAbsolutePath());
+        }
       }
     }
 

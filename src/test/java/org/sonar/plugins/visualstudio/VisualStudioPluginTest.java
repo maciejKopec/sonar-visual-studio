@@ -37,7 +37,7 @@ public class VisualStudioPluginTest {
     assertThat(propertyKeys(extensions)).containsOnly(
       "sonar.visualstudio.solution",
       "sonar.visualstudio.enable",
-      "sonar.visualstudio.outputPath",
+      "sonar.visualstudio.outputPaths",
       "sonar.visualstudio.testProjectPattern",
       "sonar.visualstudio.skippedProjects",
 

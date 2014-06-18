@@ -111,9 +111,11 @@ public class VisualStudioAssemblyLocatorTest {
     when(settings.getString("sonar.dotnet.buildPlatform")).thenReturn(null);
 
     File outputPathFolder = tmp.newFolder("other_outputPath");
-    File assemblyFile4 = tmp.newFile("other_outputPath/MyLibrary.dll");
 
-    when(settings.getString("sonar.visualstudio.outputPath")).thenReturn(outputPathFolder.getAbsolutePath());
+    File outputPathFolder2 = tmp.newFolder("other_outputPath2");
+    File assemblyFile4 = tmp.newFile("other_outputPath2/MyLibrary.dll");
+
+    when(settings.getString("sonar.visualstudio.outputPaths")).thenReturn(outputPathFolder.getAbsolutePath() + ",," + outputPathFolder2.getAbsolutePath());
     when(project.propertyGroupConditions()).thenReturn(ImmutableList.of("", ""));
     when(project.outputPaths()).thenReturn(ImmutableList.of("outputPath1", "outputPath3"));
 
