@@ -90,7 +90,9 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
     for (VisualStudioSolutionProject project : solution.projects()) {
       String escapedProjectName = escapeProjectName(project.name());
 
-      if (skippedProjects.contains(escapeProjectName(escapedProjectName))) {
+      if (!isSupportedProjectType(project)) {
+        LOG.info("Skipping the unsupported project type: " + project.path());
+      } else if (skippedProjects.contains(escapeProjectName(escapedProjectName))) {
         LOG.info("Skipping the project \"" + escapedProjectName + "\" because it is listed in the property \"" + VisualStudioPlugin.VISUAL_STUDIO_SKIPPED_PROJECTS + "\".");
       } else {
         File projectFile = relativePathFile(solutionFile.getParentFile(), project.path());
@@ -104,6 +106,12 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
     }
 
     Preconditions.checkState(hasModules, "No Visual Studio projects were found.");
+  }
+
+  private boolean isSupportedProjectType(VisualStudioSolutionProject project) {
+    String path = project.path().toLowerCase();
+    return path.endsWith(".csproj") ||
+      path.endsWith(".vbproj");
   }
 
   private void buildModule(ProjectDefinition solutionProject, String projectName, File projectFile, VisualStudioProject project, VisualStudioAssemblyLocator assemblyLocator,

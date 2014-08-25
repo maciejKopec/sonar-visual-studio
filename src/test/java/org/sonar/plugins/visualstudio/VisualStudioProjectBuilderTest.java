@@ -351,6 +351,19 @@ public class VisualStudioProjectBuilderTest {
     new VisualStudioProjectBuilder(settings).build(context);
   }
 
+  @Test
+  public void should_only_import_supported_project_types() {
+    Context context = mockContext("solution:key", new File("src/test/resources/VisualStudioProjectBuilderTest/project_types/"));
+    ProjectDefinition solutionProject = context.projectReactor().getRoot();
+
+    Settings settings = new Settings();
+    settings.setProperty(VisualStudioPlugin.VISUAL_STUDIO_ENABLE_PROPERTY_KEY, true);
+
+    new VisualStudioProjectBuilder(settings).build(context);
+
+    verify(solutionProject, Mockito.times(2)).addSubProject(Mockito.any(ProjectDefinition.class));
+  }
+
   private static Context mockContext(String key, File baseDir) {
     ProjectDefinition project = mock(ProjectDefinition.class);
     when(project.getKey()).thenReturn(key);
