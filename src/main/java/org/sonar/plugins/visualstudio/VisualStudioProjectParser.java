@@ -23,6 +23,7 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Closeables;
 
 import javax.annotation.Nullable;
@@ -48,7 +49,7 @@ public class VisualStudioProjectParser {
 
     private File file;
     private XMLStreamReader stream;
-    private final ImmutableList.Builder<String> filesBuilder = ImmutableList.builder();
+    private final ImmutableSet.Builder<String> filesBuilder = ImmutableSet.builder();
     private String outputType;
     private String assemblyName;
     private String currentCondition;
@@ -111,7 +112,7 @@ public class VisualStudioProjectParser {
         Closeables.closeQuietly(reader);
       }
 
-      return new VisualStudioProject(filesBuilder.build(), outputType, assemblyName, propertyGroupConditionsBuilder.build(), outputPathsBuilder.build());
+      return new VisualStudioProject(filesBuilder.build().asList(), outputType, assemblyName, propertyGroupConditionsBuilder.build(), outputPathsBuilder.build());
     }
 
     private void closeXmlStream() {
