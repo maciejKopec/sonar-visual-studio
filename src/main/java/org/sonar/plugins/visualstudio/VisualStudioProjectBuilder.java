@@ -80,7 +80,8 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
       throw new SonarException("Do not use the Visual Studio bootstrapper and set the \"" + SONAR_MODULES_PROPERTY_KEY + "\" property at the same time.");
     }
 
-    solutionProject.resetSourceDirs();
+    solutionProject.resetSources();
+    solutionProject.resetTests();
 
     Set<String> skippedProjects = skippedProjects();
     boolean hasModules = false;
@@ -128,12 +129,6 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
 
     boolean isTestProject = isTestProject(projectName);
 
-    if (isTestProject) {
-      module.setTestDirs(projectFile.getParentFile());
-    } else {
-      module.setSourceDirs(projectFile.getParentFile());
-    }
-
     for (String filePath : project.files()) {
       File file = relativePathFile(projectFile.getParentFile(), filePath);
       if (!file.isFile()) {
@@ -142,9 +137,9 @@ public class VisualStudioProjectBuilder extends ProjectBuilder {
         LOG.warn("Skipping the file " + file.getAbsolutePath() + " of project " + projectName + " located outside of the source directory.");
       } else {
         if (isTestProject) {
-          module.addTestFiles(file);
+          module.addTests(file);
         } else {
-          module.addSourceFiles(file);
+          module.addSources(file);
         }
       }
     }

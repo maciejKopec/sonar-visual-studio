@@ -10,7 +10,7 @@
 
   <groupId>org.codehaus.sonar-plugins.visualstudio</groupId>
   <artifactId>sonar-visual-studio-plugin</artifactId>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.2-CUSTOM</version>
   <packaging>sonar-plugin</packaging>
 
   <name>Analysis Bootstrapper for Visual Studio Projects</name>
@@ -48,7 +48,7 @@
   </issueManagement>
 
   <properties>
-    <sonarqube.version>3.7</sonarqube.version>
+    <sonarqube.version>4.5</sonarqube.version>
 
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
   </properties>

@@ -72,12 +72,13 @@ public class VisualStudioProjectBuilderTest {
 
     // This property must be forwarded
     settings.setProperty("MyLibrary.sonar.something", "foobar");
-    // This property must be overriden
+    // This property must be overridden
     settings.setProperty("MyLibrary.sonar.cs.fxcop.assembly", "foobar");
 
     new VisualStudioProjectBuilder(settings).build(context, assemblyLocator);
 
-    verify(solutionProject).resetSourceDirs();
+    verify(solutionProject).resetSources();
+    verify(solutionProject).resetTests();
 
     ArgumentCaptor<ProjectDefinition> subModules = ArgumentCaptor.forClass(ProjectDefinition.class);
     verify(solutionProject, Mockito.times(2)).addSubProject(subModules.capture());
@@ -89,17 +90,12 @@ public class VisualStudioProjectBuilderTest {
     assertThat(libraryProject.getVersion()).isNull();
 
     assertThat(libraryProject.getBaseDir().getAbsoluteFile()).isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibrary/").getAbsoluteFile());
-    assertThat(libraryProject.getSourceDirs()).hasSize(1);
-    assertThat(new File(libraryProject.getSourceDirs().get(0)).getAbsoluteFile())
-      .isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibrary/").getAbsoluteFile());
-    assertThat(libraryProject.getTestDirs()).isEmpty();
-    assertThat(libraryProject.getBaseDir().getAbsoluteFile()).isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibrary/").getAbsoluteFile());
     assertThat(libraryProject.getWorkDir()).isEqualTo(new File(workingDir, "solution_key_MyLibrary"));
 
-    assertThat(libraryProject.getSourceFiles()).hasSize(1);
-    assertThat(new File(libraryProject.getSourceFiles().get(0)).getAbsoluteFile())
+    assertThat(libraryProject.sources()).hasSize(1);
+    assertThat(new File(libraryProject.sources().get(0)).getAbsoluteFile())
       .isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibrary/Adder.cs").getAbsoluteFile());
-    assertThat(libraryProject.getTestFiles()).isEmpty();
+    assertThat(libraryProject.tests()).isEmpty();
 
     assertThat(libraryProject.getProperties().get("sonar.something")).isEqualTo("foobar");
 
@@ -123,15 +119,11 @@ public class VisualStudioProjectBuilderTest {
 
     assertThat(libraryTestProject.getBaseDir().getAbsoluteFile())
       .isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibraryTest/").getAbsoluteFile());
-    assertThat(libraryTestProject.getSourceDirs()).isEmpty();
-    assertThat(libraryTestProject.getTestDirs()).hasSize(1);
-    assertThat(new File(libraryTestProject.getTestDirs().get(0)).getAbsoluteFile())
-      .isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibraryTest/").getAbsoluteFile());
     assertThat(libraryTestProject.getWorkDir()).isEqualTo(new File(workingDir, "solution_key_MyLibraryTest"));
 
-    assertThat(libraryTestProject.getSourceFiles()).isEmpty();
-    assertThat(libraryTestProject.getTestFiles()).hasSize(1);
-    assertThat(new File(libraryTestProject.getTestFiles().get(0)).getAbsoluteFile())
+    assertThat(libraryTestProject.sources()).isEmpty();
+    assertThat(libraryTestProject.tests()).hasSize(1);
+    assertThat(new File(libraryTestProject.tests().get(0)).getAbsoluteFile())
       .isEqualTo(new File("src/test/resources/VisualStudioProjectBuilderTest/single_sln/MyLibraryTest/AdderTest.cs").getAbsoluteFile());
 
     assertThat(libraryTestProject.getProperties().get("sonar.cs.fxcop.assembly")).isNull();
